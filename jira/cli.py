@@ -4,7 +4,8 @@ jira
 Usage:
   jira session [login <url> <username> <password>|logout]
   jira field [getoptions <field_key>|addprojectoptions <field_key> <project_id>|delprojectoptions <field_key> <project_id>]
-  jira option [get <field_key> <option_id>|add <field_key> <option_value>|del <field_key> <option_id>]
+  jira option [get <field_key> <option_id>|add <field_key> <options_file> <project_keys>|del <field_key> <option_id>|exist <field_key> <option_value>]
+  jira options [add <field_key> <options_file> <project_keys>]
   jira issue [get <issue_key>|del <issue_key>|set <issue_keys> <field_key> <value_or_field_key>|createmeta <project_key> <issue_type>]
   jira -h | --help
   jira --version
@@ -16,15 +17,19 @@ Options:
 Examples:
   jira session login https://myhost.atlassian.net myusername mypassword
   jira field
-  jira field getoptions <field_key>
+  jira field getoptions dsi-support-plugin__application
+  jira option del dsi-support-plugin__application 1
+  jira option del dsi-support-plugin__application 1..28
   jira issue get DSP-10
   jira issue set DSP-15..DSP-57 description *dsi-support-plugin__description
   jira issue set DSP-15..DSP-57 description "New description"
   jira issue set DSP-10 description *dsi-support-plugin__description
+  jira option exist dsi-support-plugin__application "toto"
+  jira options add dsi-support-plugin__application ../only_produits.csv 20211,19802
 
 Help:
   For help using this tool, please open an issue on the Github repository:
-  https://github.com/rastaman/jira-cli
+  http://scm.ul.mediametrie.fr/dsi-support-portal/jira-cli
 """
 
 

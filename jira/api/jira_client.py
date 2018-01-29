@@ -84,6 +84,11 @@ class JiraClient:
         r = requests.get(self.url + '/rest/api/2/field/' + field_key + '/option?maxResults=1000', auth=basicAuth)
         return r.status_code, r.content
 
+    def addOption(self, field_key, option):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        r = requests.post(self.url + '/rest/api/2/field/' + field_key + '/option', auth=basicAuth, json=option)
+        return r.status_code, r.content
+
     def updateFieldOption(self, field_key, option):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         r = requests.put(self.url + '/rest/api/2/field/' + field_key + '/option/' + str(option['id']), auth=basicAuth, json=option)
@@ -144,3 +149,19 @@ class JiraClient:
                 return f
         print("Didn't found key for %s" % field_key)
         return None
+
+    def hasOption(self, field_key, option_value):
+        rc, datas = self.getFieldOptions(field_key)
+        allOptions = json.loads(datas)['values']
+        allValues = []
+        for option in allOptions:
+            allValues.append(option['value'].encode('utf-8'))
+        return self.indexOf(option_value, allValues) > -1
+
+    def indexOf(self, item, array):
+        idx = 0
+        for i in array:
+            if str(i) == str(item):
+                return idx
+            idx = idx+1
+        return -1

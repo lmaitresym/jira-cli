@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """The session command."""
 
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 import json
 from .base import Base
 from jira.api.jira_client import JiraClient
@@ -15,11 +20,24 @@ class Option(Base):
         if self.hasOption('get'):
             self.getOption()
         elif self.hasOption('add'):
-            self.addOption()
+            self.addOptions()
         elif self.hasOption('del'):
             self.deleteOption()
+        elif self.hasOption('delAll'):
+            self.deleteAllOptions()
+        elif self.hasOption('exist'):
+            self.existOption()
         else:
             print("Nothing to do.")
+
+    def existOption(self):
+        field_key = self.options['<field_key>']
+        option_value = self.options['<option_value>'].encode('utf-8')
+        result = self.jira_client.hasOption(field_key, option_value)
+        if result:
+            print 'TRUE'
+        else:
+            print 'FALSE'
 
     def getOption(self):
         field_key = self.options['<field_key>']
@@ -42,16 +60,38 @@ class Option(Base):
             options_limits = str(option_id).split('..')
             option_low = int(options_limits[0])
             option_high = int(options_limits[1])
+            results = dict()
             for opt in range(option_low, option_high):
                 rc, datas = self.jira_client.deleteFieldOption(field_key, opt)
                 if rc != 204:
                     try:
-                        print(json.dumps(json.loads(datas), indent=2))
+                        errorMessages = json.loads(datas)['errorMessages']
+                        if len(errorMessages) == 1:
+                            results[opt] = errorMessages[0]
+                        else:
+                            results[opt] = errorMessages
                     except:
                         print(datas)
+            print(json.dumps(results, indent=2))
 
-    def addOption(self):
-        pass
+    def addOptions(self):
+        field_key = self.options['<field_key>']
+        options_file = self.options['<options_file>']
+        project_keys = self.options['<project_keys>']
+        option_values = []
+        with open(options_file, 'r') as file:
+            for line in file:
+                line_clean = line.strip(' \t\n\r').encode('utf-8')
+                print line_clean
+                option_values.append(line_clean)
+        projects = project_keys.split(',')
+        config = dict(scope=dict(projects=projects))
+        print "Will add %d options to %s" % (len(option_values),field_key)
+        for option_value in option_values:
+            if not self.jira_client.hasOption(field_key, option_value):
+                jsonOption = dict(value=option_value, config=config)
+                
+                self.jira_client.addOption(field_key, jsonOption)
 
     def indexOf(self, item, array):
         idx = 0
