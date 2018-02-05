@@ -66,8 +66,14 @@ class JiraClient:
         return r.status_code
 
     def logout(self):
-        r = requests.delete(self.url + '/rest/auth/1/session')
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        r = requests.delete(self.url + '/rest/auth/1/session', auth=basicAuth)
         return r.status_code
+
+    def getFields(self):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        r = requests.get(self.url + '/rest/api/2/field', auth=basicAuth)
+        return r.status_code, r.content
 
     def getFieldOption(self, field_key, option_id):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
@@ -97,6 +103,19 @@ class JiraClient:
     def updateFieldOption(self, field_key, option):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         r = requests.put(self.url + '/rest/api/2/field/' + field_key + '/option/' + str(option['id']), auth=basicAuth, json=option)
+        return r.status_code, r.content
+
+    def replaceOption(self, field_key, option_to_replace, option_to_use, jql_filter):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        params = {
+            'replaceWith': option_to_use,
+            'jql': jql_filter
+            }
+        r = requests.delete(self.url + '/rest/api/2/field/' + field_key + '/option/' + option_to_replace + '/issue',
+                            auth=basicAuth,
+                            params=params)
+        if r.status_code == 303:
+            print('Get task status here: %s' % r.content)
         return r.status_code, r.content
 
     def manageOptionsForProject(self, field_key, project_id, verb):

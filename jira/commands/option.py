@@ -27,16 +27,30 @@ class Option(Base):
             self.replaceOption()
         elif self.hasOption('exist'):
             self.existOption()
+        elif self.hasOption('getid'):
+            self.getOptionId()
         else:
             print("Nothing to do.")
 
+    def getOptionId(self):
+        field_key = self.options['<field_key>']
+        option_value = self.options['<option_value>']
+        rc, datas = self.jira_client.getFieldOptions(field_key)
+        option_values = json.loads(datas)['values']
+        for current_option in option_values:
+            current_option_value = current_option['value']
+            if current_option_value == option_value:
+                print(current_option['id'])
+                break
+
+    # replace <field_key> <option_to_replace> <option_to_use> <jql_filter>
     def replaceOption(self):
         field_key = self.options['<field_key>']
         option_to_replace = self.options['<option_to_replace>']
         option_to_use = self.options['<option_to_use>']
         jql_filter = self.options['<jql_filter>']
-        print('Will replace option %s by option %s in field %s for issues %s' % (option_to_replace, option_to_use, field_key, jql_filter))
-        pass
+        rc, datas = self.jira_client.replaceOption(field_key, option_to_replace, option_to_use, jql_filter)
+        print(datas)
 
     def existOption(self):
         field_key = self.options['<field_key>']

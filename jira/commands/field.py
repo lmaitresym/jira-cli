@@ -20,8 +20,19 @@ class Field(Base):
             self.delProjectToOptions()
         elif self.hasOption('loadoptions'):
             self.loadOptions()
+        elif self.hasOption('get'):
+            self.getField()
         else:
             print("Nothing to do.")
+
+    def getField(self):
+        field_key_or_id_or_name = self.options['<field_key_or_id_or_name>']
+        rc, datas = self.jira_client.getFields()
+        fields_list = json.loads(datas)
+        for field in fields_list:
+            if field['id'] == field_key_or_id_or_name or field['key'] == field_key_or_id_or_name or field['name'] == field_key_or_id_or_name:
+                print json.dumps(field)
+                break
 
     def loadOptions(self):
         field_key = self.options['<field_key>']

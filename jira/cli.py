@@ -3,8 +3,8 @@ jira
 
 Usage:
   jira session (login <url> <username> <password>|logout)
-  jira field (getoptions <field_key>|addprojectoptions <field_key> <project_id>|delprojectoptions <field_key> <project_id>|loadoptions <field_key> <options_file> <project_ids>)
-  jira option (get <field_key> <option_id>|add <field_key> <options_file> <project_keys>|del <field_key> <option_id>|exist <field_key> <option_value>|replace <field_key> <option_to_replace> <option_to_use> <jql_filter>)
+  jira field (get <field_key_or_id_or_name>|getoptions <field_key>|addprojectoptions <field_key> <project_id>|delprojectoptions <field_key> <project_id>|loadoptions <field_key> <options_file> <project_ids>)
+  jira option (get <field_key> <option_id>|add <field_key> <options_file> <project_keys>|del <field_key> <option_id>|exist <field_key> <option_value>|replace <field_key> <option_to_replace> <option_to_use> <jql_filter>|getid <field_key> <option_value>)
   jira options add <field_key> <options_file> <project_keys>
   jira issues get <jql>
   jira issue (get <issue_key>|del <issue_key>|set <issue_keys> <field_key> <value_or_field_key>|createmeta <project_key> <issue_type>)
