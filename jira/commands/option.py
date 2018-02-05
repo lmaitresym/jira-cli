@@ -23,12 +23,20 @@ class Option(Base):
             self.addOptions()
         elif self.hasOption('del'):
             self.deleteOption()
-        elif self.hasOption('delAll'):
-            self.deleteAllOptions()
+        elif self.hasOption('replace'):
+            self.replaceOption()
         elif self.hasOption('exist'):
             self.existOption()
         else:
             print("Nothing to do.")
+
+    def replaceOption(self):
+        field_key = self.options['<field_key>']
+        option_to_replace = self.options['<option_to_replace>']
+        option_to_use = self.options['<option_to_use>']
+        jql_filter = self.options['<jql_filter>']
+        print('Will replace option %s by option %s in field %s for issues %s' % (option_to_replace, option_to_use, field_key, jql_filter))
+        pass
 
     def existOption(self):
         field_key = self.options['<field_key>']

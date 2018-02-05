@@ -89,6 +89,11 @@ class JiraClient:
         r = requests.post(self.url + '/rest/api/2/field/' + field_key + '/option', auth=basicAuth, json=option)
         return r.status_code, r.content
 
+    def addOptionWithId(self, field_key, option, option_id):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        r = requests.put(self.url + '/rest/api/2/field/' + field_key + '/option/' + option_id, auth=basicAuth, json=option)
+        return r.status_code, r.content
+
     def updateFieldOption(self, field_key, option):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         r = requests.put(self.url + '/rest/api/2/field/' + field_key + '/option/' + str(option['id']), auth=basicAuth, json=option)

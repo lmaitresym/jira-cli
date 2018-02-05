@@ -18,8 +18,23 @@ class Field(Base):
             self.addProjectToOptions()
         elif self.hasOption('delprojectoptions'):
             self.delProjectToOptions()
+        elif self.hasOption('loadoptions'):
+            self.loadOptions()
         else:
             print("Nothing to do.")
+
+    def loadOptions(self):
+        field_key = self.options['<field_key>']
+        options_file = self.options['<options_file>']
+        project_ids = self.options['<project_ids>']
+        projects = project_ids.split(',')
+        config = dict(scope=dict(projects=projects))
+        with open(options_file,'r') as options_raw:
+            options = json.load(options_raw)
+            for option_id in options:
+                option_value = options[option_id]
+                json_option = dict(id=option_id, value=option_value, config=config)
+                self.jira_client.addOptionWithId(field_key, json_option, option_id)
 
     def getOptions(self):
         field_key = self.options['<field_key>']
