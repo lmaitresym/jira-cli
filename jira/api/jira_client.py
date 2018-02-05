@@ -115,6 +115,12 @@ class JiraClient:
         r = requests.delete(self.url + '/rest/api/2/issue/' + issue_key, auth=basicAuth)
         return r.status_code, r.content
 
+    def getIssues(self, jql):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        params = dict(jql=jql,fields='*all')
+        r = requests.get(self.url + '/rest/api/2/search', params=params, auth=basicAuth)
+        return r.status_code, r.content
+
 # PUT /rest/api/2/issue/{issueIdOrKey}?notifyUsers=false
 # 
     def updateIssue(self, issue_key, field_key, value):

@@ -2,11 +2,12 @@
 jira
 
 Usage:
-  jira session [login <url> <username> <password>|logout]
-  jira field [getoptions <field_key>|addprojectoptions <field_key> <project_id>|delprojectoptions <field_key> <project_id>|loadoptions <field_key> <options_file> <project_ids>]
-  jira option [get <field_key> <option_id>|add <field_key> <options_file> <project_keys>|del <field_key> <option_id>|exist <field_key> <option_value>|replace <field_key> <option_to_replace> <option_to_use> <jql_filter>]
-  jira options [add <field_key> <options_file> <project_keys>]
-  jira issue [get <issue_key>|del <issue_key>|set <issue_keys> <field_key> <value_or_field_key>|createmeta <project_key> <issue_type>]
+  jira session (login <url> <username> <password>|logout)
+  jira field (getoptions <field_key>|addprojectoptions <field_key> <project_id>|delprojectoptions <field_key> <project_id>|loadoptions <field_key> <options_file> <project_ids>)
+  jira option (get <field_key> <option_id>|add <field_key> <options_file> <project_keys>|del <field_key> <option_id>|exist <field_key> <option_value>|replace <field_key> <option_to_replace> <option_to_use> <jql_filter>)
+  jira options add <field_key> <options_file> <project_keys>
+  jira issues get <jql>
+  jira issue (get <issue_key>|del <issue_key>|set <issue_keys> <field_key> <value_or_field_key>|createmeta <project_key> <issue_type>)
   jira -h | --help
   jira --version
 
@@ -41,6 +42,7 @@ from docopt import docopt
 
 from . import __version__ as VERSION
 
+import json
 import inspect
 
 
@@ -49,14 +51,18 @@ def main():
     import jira.commands
     options = docopt(__doc__, version=VERSION)
 
+    #print("In entry point: %s" % json.dumps(options,indent=2))
+    #print("Commands: %s" % json.dumps(dir(jira.commands),indent=2))
+
     # Here we'll try to dynamically match the command the user is trying to run
     # with a pre-defined command class we've already created.
     for (k, v) in options.items():
-
+        #print("Look for %s (and %s)" % (k, v))
         if hasattr(jira.commands, k) and v:
             module = getattr(jira.commands, k)
             jira.commands = getmembers(module, isclass)
             command = [command[1] for command in jira.commands if command[0] != 'Base' and inspect.getmodule(
                 command[1]).__name__.startswith('jira.commands')][0]
+            #print("Command is %s" % command.__name__)
             command = command(options)
             command.run()
