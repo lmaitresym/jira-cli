@@ -34,7 +34,7 @@ class Base(object):
         if self.headless:
             self.results = dict(rc=rc, datas=datas)
         else:
-            if rc == 200:
+            if rc == 200 or rc == 204:
                 print(datas)
             else:
                 print('KO - %d' % rc)

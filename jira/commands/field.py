@@ -29,10 +29,11 @@ class Field(Base):
         field_key_or_id_or_name = self.options['<field_key_or_id_or_name>']
         rc, datas = self.jira_client.getFields()
         fields_list = json.loads(datas)
+        results = list()
         for field in fields_list:
             if field['id'] == field_key_or_id_or_name or field['key'] == field_key_or_id_or_name or field['name'] == field_key_or_id_or_name:
-                print json.dumps(field)
-                break
+                results.append(field)
+        print(json.dumps(results))
 
     def loadOptions(self):
         field_key = self.options['<field_key>']

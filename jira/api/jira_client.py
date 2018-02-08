@@ -143,13 +143,11 @@ class JiraClient:
 # PUT /rest/api/2/issue/{issueIdOrKey}?notifyUsers=false
 # 
     def updateIssue(self, issue_key, field_key, value):
-        payload = {
-            "update": {
-                "fields": {}
-            }
-        }
-        payload['update']['fields']
-        pass
+        payload = dict(fields=dict())
+        payload['fields'][field_key] = value
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        r = requests.put(self.url + '/rest/api/2/issue/' + issue_key, json=payload, auth=basicAuth)
+        return r.status_code, r.content
 
     def getCreateMeta(self, project_key, issuetype_key):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
@@ -175,9 +173,9 @@ class JiraClient:
         for f in fields:
             field = fields[f]
             if field['key'] == field_key:
-                print("Found field %s, return %s" % (field_key, f))
+                #print("Found field %s, return %s" % (field_key, f))
                 return f
-        print("Didn't found key for %s" % field_key)
+        #print("Didn't found key for %s" % field_key)
         return None
 
     def hasOption(self, field_key, option_value):
