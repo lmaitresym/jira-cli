@@ -22,16 +22,21 @@ Before you leave, close your session::
 
 All commands::
 
-```sh
-  jira session [login <url> <username> <password>|logout|get]
-  jira -h | --help
-jira --version
-``````````````
+    $ jira
+    Usage:
+    jira session (login <url> <username> <password>|logout)
+    jira field (get <field_key_or_id_or_name>|getoptions <field_key>|addprojectoptions <field_key> <project_id>|delprojectoptions <field_key> <project_id>|loadoptions <field_key> <options_file> <project_ids>|addoptions <field_key> <options_file> <project_keys>)
+    jira option (get <field_key> <option_id>|add <field_key> <option_value> <project_keys>|del <field_key> <option_id>|exist <field_key> <option_value>|replace <field_key> <option_to_replace> <option_to_use> <jql_filter>|getid <field_key> <option_value>)
+    jira options add <field_key> <options_file> <project_keys>
+    jira issues (get <jql>|getkeys <jql>)
+    jira issue (get <issue_key>|del <issue_key>|set <issue_keys> <field_key> <value_or_field_key>|createmeta <project_key> <issue_type>)
+    jira -h | --help
+    jira --version
 
 Examples::
 
     $ jira session login http://myhost:8080/jira myusername mypassword
-    $ jira system tenant pause
+    $ jira field getoptions dsi-support-plugin__application
 
 Help
 ----
