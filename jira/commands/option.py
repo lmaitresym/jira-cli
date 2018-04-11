@@ -20,7 +20,7 @@ class Option(Base):
         if self.hasOption('get'):
             self.getOption()
         elif self.hasOption('add'):
-            self.addOptions()
+            self.addOption()
         elif self.hasOption('del'):
             self.deleteOption()
         elif self.hasOption('replace'):
@@ -96,24 +96,16 @@ class Option(Base):
                         print(datas)
             print(json.dumps(results, indent=2))
 
-    def addOptions(self):
+    def addOption(self):
         field_key = self.options['<field_key>']
-        options_file = self.options['<options_file>']
+        option_value = self.options['<option_value>']
         project_keys = self.options['<project_keys>']
-        option_values = []
-        with open(options_file, 'r') as file:
-            for line in file:
-                line_clean = line.strip(' \t\n\r').encode('utf-8')
-                print line_clean
-                option_values.append(line_clean)
         projects = project_keys.split(',')
         config = dict(scope=dict(projects=projects))
-        print "Will add %d options to %s" % (len(option_values),field_key)
-        for option_value in option_values:
-            if not self.jira_client.hasOption(field_key, option_value):
-                jsonOption = dict(value=option_value, config=config)
-                
-                self.jira_client.addOption(field_key, jsonOption)
+        print "Will add %s option to field %s" % (option_value,field_key)
+        if not self.jira_client.hasOption(field_key, option_value):
+            jsonOption = dict(value=option_value, config=config)
+            self.jira_client.addOption(field_key, jsonOption)
 
     def indexOf(self, item, array):
         idx = 0

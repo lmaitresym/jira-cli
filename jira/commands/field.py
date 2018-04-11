@@ -22,6 +22,8 @@ class Field(Base):
             self.loadOptions()
         elif self.hasOption('get'):
             self.getField()
+        elif self.hasOption('addoptions'):
+            self.addOptions()
         else:
             print("Nothing to do.")
 
@@ -93,3 +95,27 @@ class Field(Base):
                 return idx
             idx = idx+1
         return -1
+    
+    def addOptions(self):
+        field_key = self.options['<field_key>']
+        options_file = self.options['<options_file>']
+        project_keys = self.options['<project_keys>']
+        option_values = []
+        with open(options_file, 'r') as file:
+            for line in file:
+                line_clean = line.strip(' \t\n\r').encode('utf-8')
+                #print line_clean
+                option_values.append(line_clean)
+        projects = project_keys.split(',')
+        config = dict(scope=dict(projects=projects))
+        print "Will add %d options to %s" % (len(option_values),field_key)
+        results = []
+        index = 1
+        for option_value in option_values:
+            print("Add option %d/%d" % (index,len(option_values)))
+            if not self.jira_client.hasOption(field_key, option_value):
+                jsonOption = dict(value=option_value, config=config)
+                rc, datas = self.jira_client.addOption(field_key, jsonOption)
+                results.append(datas)
+            index += 1
+        print(json.dumps(results))
