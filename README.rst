@@ -30,6 +30,8 @@ All commands::
     jira options add <field_key> <options_file> <project_keys>
     jira issues (get <jql>|getkeys <jql>)
     jira issue (get <issue_key>|del <issue_key>|set <issue_keys> <field_key> <value_or_field_key>|createmeta <project_key> <issue_type>)
+    jira project (get <project_key_or_id>)
+    jira role (get <project_id> <role_id>)
     jira -h | --help
     jira --version
 
