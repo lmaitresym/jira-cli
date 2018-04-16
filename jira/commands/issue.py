@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The session command."""
+"""The issue command."""
 
 import json
 from .base import Base

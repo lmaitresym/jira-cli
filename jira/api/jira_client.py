@@ -193,3 +193,13 @@ class JiraClient:
                 return idx
             idx = idx+1
         return -1
+    
+    def getProject(self, project_key_or_id):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        r = requests.get(self.url + '/rest/api/2/project/' + project_key_or_id, auth=basicAuth)
+        return r.status_code, r.content
+
+    def getRole(self, project_id, role_id):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        r = requests.get(self.url + '/rest/api/2/project/' + project_id + '/role/' + role_id, auth=basicAuth)
+        return r.status_code, r.content

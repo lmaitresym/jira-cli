@@ -8,6 +8,8 @@ Usage:
   jira options add <field_key> <options_file> <project_keys>
   jira issues (get <jql>|getkeys <jql>)
   jira issue (get <issue_key>|del <issue_key>|set <issue_keys> <field_key> <value_or_field_key>|createmeta <project_key> <issue_type>)
+  jira project (get <project_key_or_id>)
+  jira role (get <project_id> <role_id>)
   jira -h | --help
   jira --version
 
@@ -29,6 +31,8 @@ Examples:
   jira option exist dsi-support-plugin__application "toto"
   jira options add dsi-support-plugin__application ../only_produits.csv 20211,19802
   jira field loadoptions dsi-support-plugin__typeIncident options_to_restore.json 20211,19802
+  jira project get PID
+  jira role get 18090 10080 | jq '.actors[] | .displayName'
 
 Help:
   For help using this tool, please open an issue on the Github repository:

@@ -3,3 +3,5 @@ from .field import *
 from .option import *
 from .issues import *
 from .issue import *
+from .project import *
+from .role import *
