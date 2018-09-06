@@ -1,12 +1,6 @@
 import requests
 import json
-import os
-import base64
-import glob
-from lxml import etree
-from pip._vendor.requests.api import head
 from requests.auth import HTTPBasicAuth
-from numbers import Number
 
 
 class JiraClient:
@@ -46,29 +40,15 @@ class JiraClient:
     # Session API
 
     def login(self, url, username, password):
-        payload = {
-            'username': username,
-            'password': password
-        }
-
-        r = requests.post(url + '/rest/auth/1/session', json=payload, headers={
-            'Content-Type': 'application/json',
-            'charset': 'utf-8'
-        })
-
-        if r.status_code == 200:
-            cookies = requests.utils.dict_from_cookiejar(r.cookies)
-            self.configuration['url'] = url
-            self.configuration['cookies'] = cookies
-            self.configuration['username'] = username
-            self.configuration['password'] = password
-
-        return r.status_code
+        self.configuration['url'] = url
+        self.configuration['username'] = username
+        self.configuration['password'] = password
+        return 200
 
     def logout(self):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.delete(self.url + '/rest/auth/1/session', auth=basicAuth)
-        return r.status_code
+        #basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        #r = requests.delete(self.url + '/rest/auth/1/session', auth=basicAuth)
+        return 500
 
     def getFields(self):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
@@ -141,7 +121,7 @@ class JiraClient:
         return r.status_code, r.content
 
 # PUT /rest/api/2/issue/{issueIdOrKey}?notifyUsers=false
-# 
+#
     def updateIssue(self, issue_key, field_key, value):
         payload = dict(fields=dict())
         payload['fields'][field_key] = value
@@ -193,7 +173,7 @@ class JiraClient:
                 return idx
             idx = idx+1
         return -1
-    
+
     def getProject(self, project_key_or_id):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         r = requests.get(self.url + '/rest/api/2/project/' + project_key_or_id, auth=basicAuth)
