@@ -11,8 +11,7 @@ class JiraClient:
         if configuration is not None and 'url' in configuration:
             self.url = configuration['url']
         self.session = None
-        self.platform_session = None
-        #self.enableLogging()
+        # self.enableLogging()
 
     def enableLogging(self):
         import logging
@@ -49,6 +48,9 @@ class JiraClient:
         #basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         #r = requests.delete(self.url + '/rest/auth/1/session', auth=basicAuth)
         return 500
+
+    def dump(self):
+        return self.configuration
 
     def getFields(self):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
@@ -177,6 +179,11 @@ class JiraClient:
     def getProject(self, project_key_or_id):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         r = requests.get(self.url + '/rest/api/2/project/' + project_key_or_id, auth=basicAuth)
+        return r.status_code, r.content
+
+    def listProjects(self):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        r = requests.get(self.url + '/rest/api/2/project', auth=basicAuth)
         return r.status_code, r.content
 
     def getRole(self, project_id, role_id):

@@ -14,10 +14,16 @@ class Project(Base):
         self.jira_client = JiraClient(self.loadConfiguration())
         if self.hasOption('get'):
             self.getProject()
+        elif self.hasOption('list'):
+            self.listProjects()
         else:
             print("Nothing to do.")
 
     def getProject(self):
         project_key_or_id = self.options['<project_key_or_id>']
         rc, datas = self.jira_client.getProject(project_key_or_id)
+        self.processResults(rc, datas)
+
+    def listProjects(self):
+        rc, datas = self.jira_client.listProjects()
         self.processResults(rc, datas)

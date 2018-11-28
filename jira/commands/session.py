@@ -16,6 +16,8 @@ class Session(Base):
             self.login()
         elif self.hasOption('logout'):
             self.logout()
+        elif self.hasOption('dump'):
+            self.dump()
         else:
             print("Nothing to do.")
 
@@ -33,4 +35,8 @@ class Session(Base):
     def logout(self):
         rc = self.jira_client.logout()
         self.processResultCode(rc)
+
+    def dump(self):
+        configuration = self.jira_client.getConfiguration()
+        print(json.dumps(configuration))
 
