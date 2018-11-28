@@ -5,3 +5,4 @@ from .issues import *
 from .issue import *
 from .project import *
 from .role import *
+from .servicedesk import *

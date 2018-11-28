@@ -10,6 +10,7 @@ Usage:
   jira issue (get <issue_key>|del <issue_key>|set <issue_keys> <field_key> <value_or_field_key>|createmeta <project_key> <issue_type>)
   jira project (get <project_key_or_id>|list)
   jira role (get <project_id> <role_id>)
+  jira servicedesk (get <servicedesk_id>|list)
   jira -h | --help
   jira --version
 

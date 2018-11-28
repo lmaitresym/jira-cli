@@ -190,3 +190,13 @@ class JiraClient:
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         r = requests.get(self.url + '/rest/api/2/project/' + project_id + '/role/' + role_id, auth=basicAuth)
         return r.status_code, r.content
+
+    def getServiceDesk(self, servicedesk_id):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        r = requests.get(self.url + '/rest/servicedeskapi/servicedesk/' + servicedesk_id, auth=basicAuth)
+        return r.status_code, r.content
+
+    def listServiceDesks(self):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        r = requests.get(self.url + '/rest/servicedeskapi/servicedesk', auth=basicAuth)
+        return r.status_code, r.content
