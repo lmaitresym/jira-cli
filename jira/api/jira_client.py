@@ -57,6 +57,22 @@ class JiraClient:
         r = requests.get(self.url + '/rest/api/2/field', auth=basicAuth)
         return r.status_code, r.content
 
+    def getReferenceData(self, field_key):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        params = {
+            'fieldName': field_key
+        }
+        r = requests.get(self.url + '/rest/api/3/jql/autocompletedata', params=params, auth=basicAuth)
+        return r.status_code, r.content
+
+    def getSuggestions(self, field_key):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        params = {
+            'fieldName': field_key
+        }
+        r = requests.get(self.url + '/rest/api/3/jql/autocompletedata/suggestions', params=params, auth=basicAuth)
+        return r.status_code, r.content
+
     def getFieldOption(self, field_key, option_id):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         r = requests.get(self.url + '/rest/api/2/field/' + field_key + '/option/' + str(option_id), auth=basicAuth)
@@ -122,8 +138,6 @@ class JiraClient:
         r = requests.get(self.url + '/rest/api/2/search', params=params, auth=basicAuth)
         return r.status_code, r.content
 
-# PUT /rest/api/2/issue/{issueIdOrKey}?notifyUsers=false
-#
     def updateIssue(self, issue_key, field_key, value):
         payload = dict(fields=dict())
         payload['fields'][field_key] = value

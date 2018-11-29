@@ -1,0 +1,316 @@
+{
+  "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations,customfield_10502.properties,customfield_10503.properties,customfield_10505.properties,customfield_10507.properties,customfield_10508.properties,customfield_10509.properties,customfield_10600.properties,customfield_10602.properties,customfield_11003.properties,customfield_10703.properties,customfield_10707.properties,customfield_10401.properties,customfield_10402.properties,customfield_10403.properties,customfield_10407.properties",
+  "id": "11603",
+  "self": "https://mme-connect-dev.atlassian.net/rest/api/2/issue/11603",
+  "key": "GSD-73",
+  "fields": {
+    "fixVersions": [],
+    "resolution": null,
+    "customfield_10500": null,
+    "customfield_10104": null,
+    "customfield_10105": {
+      "_links": {
+        "jiraRest": "https://mme-connect-dev.atlassian.net/rest/api/2/issue/11603",
+        "web": "https://mme-connect-dev.atlassian.net/servicedesk/customer/portal/2/GSD-73",
+        "self": "https://mme-connect-dev.atlassian.net/rest/servicedeskapi/request/11603"
+      },
+      "requestType": {
+        "_expands": [
+          "field"
+        ],
+        "id": "33",
+        "_links": {
+          "self": "https://mme-connect-dev.atlassian.net/rest/servicedeskapi/servicedesk/2/requesttype/33"
+        },
+        "name": "Incident",
+        "description": "",
+        "helpText": "",
+        "issueTypeId": "10104",
+        "serviceDeskId": "2",
+        "groupIds": [
+          "11"
+        ],
+        "icon": {
+          "id": "10439",
+          "_links": {
+            "iconUrls": {
+              "48x48": "https://mme-connect-dev.atlassian.net/secure/viewavatar?avatarType=SD_REQTYPE&size=large&avatarId=10439",
+              "24x24": "https://mme-connect-dev.atlassian.net/secure/viewavatar?avatarType=SD_REQTYPE&size=small&avatarId=10439",
+              "16x16": "https://mme-connect-dev.atlassian.net/secure/viewavatar?avatarType=SD_REQTYPE&size=xsmall&avatarId=10439",
+              "32x32": "https://mme-connect-dev.atlassian.net/secure/viewavatar?avatarType=SD_REQTYPE&size=medium&avatarId=10439"
+            }
+          }
+        }
+      },
+      "currentStatus": {
+        "status": "Priority triage",
+        "statusCategory": "NEW",
+        "statusDate": {
+          "iso8601": "2018-11-15T10:57:19+0100",
+          "jira": "2018-11-15T10:57:19.632+0100",
+          "friendly": "Yesterday 10:57 AM",
+          "epochMillis": 1542275839632
+        }
+      }
+    },
+    "customfield_10501": null,
+    "customfield_10502": {
+      "id": 7,
+      "value": "DPCM - Cross Médias"
+    },
+    "customfield_10106": [],
+    "customfield_10107": null,
+    "customfield_10503": null,
+    "customfield_10900": null,
+    "customfield_10108": null,
+    "customfield_10505": null,
+    "customfield_10507": null,
+    "customfield_10508": {
+      "id": 19,
+      "value": "Autre"
+    },
+    "customfield_10509": null,
+    "lastViewed": "2018-11-16T16:47:44.562+0100",
+    "priority": {
+      "self": "https://mme-connect-dev.atlassian.net/rest/api/2/priority/1",
+      "iconUrl": "https://mme-connect-dev.atlassian.net/images/icons/priorities/highest.svg",
+      "name": "Highest",
+      "id": "1"
+    },
+    "customfield_10101": null,
+    "customfield_10102": null,
+    "labels": [],
+    "customfield_10103": {
+      "hasEpicLinkFieldDependency": false,
+      "showField": false,
+      "nonEditableReason": {
+        "reason": "PLUGIN_LICENSE_ERROR",
+        "message": "Portfolio for Jira must be licensed for the Parent Link to be available."
+      }
+    },
+    "aggregatetimeoriginalestimate": null,
+    "timeestimate": null,
+    "versions": [],
+    "issuelinks": [],
+    "assignee": null,
+    "status": {
+      "self": "https://mme-connect-dev.atlassian.net/rest/api/2/status/10104",
+      "description": "",
+      "iconUrl": "https://mme-connect-dev.atlassian.net/images/icons/statuses/generic.png",
+      "name": "Priority triage",
+      "id": "10104",
+      "statusCategory": {
+        "self": "https://mme-connect-dev.atlassian.net/rest/api/2/statuscategory/2",
+        "id": 2,
+        "key": "new",
+        "colorName": "blue-gray",
+        "name": "To Do"
+      }
+    },
+    "components": [],
+    "customfield_10600": {
+      "id": 4,
+      "value": "Classe Service 4"
+    },
+    "customfield_10601": "Nora FRERET",
+    "customfield_10602": {
+      "id": 9,
+      "value": "DSI - DPI - Support Clients"
+    },
+    "aggregatetimeestimate": null,
+    "customfield_10603": {
+      "id": "9",
+      "name": "Temps de prise en compte",
+      "_links": {
+        "self": "https://mme-connect-dev.atlassian.net/rest/servicedeskapi/request/11603/sla/9"
+      },
+      "completedCycles": []
+    },
+    "customfield_10604": {
+      "id": "10",
+      "name": "Temps de résolution",
+      "_links": {
+        "self": "https://mme-connect-dev.atlassian.net/rest/servicedeskapi/request/11603/sla/10"
+      },
+      "completedCycles": []
+    },
+    "creator": {
+      "self": "https://mme-connect-dev.atlassian.net/rest/api/2/user?accountId=557058%3A1b4b4387-52e2-435d-a81a-f3a73f9b12d0",
+      "name": "admin",
+      "key": "admin",
+      "accountId": "557058:1b4b4387-52e2-435d-a81a-f3a73f9b12d0",
+      "emailAddress": "lmaitre@mediametrie.fr",
+      "avatarUrls": {
+        "48x48": "https://avatar-cdn.atlassian.com/fde876d76ecc67fa791f902c69f63822?s=48&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Ffde876d76ecc67fa791f902c69f63822%3Fd%3Dmm%26s%3D48%26noRedirect%3Dtrue",
+        "24x24": "https://avatar-cdn.atlassian.com/fde876d76ecc67fa791f902c69f63822?s=24&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Ffde876d76ecc67fa791f902c69f63822%3Fd%3Dmm%26s%3D24%26noRedirect%3Dtrue",
+        "16x16": "https://avatar-cdn.atlassian.com/fde876d76ecc67fa791f902c69f63822?s=16&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Ffde876d76ecc67fa791f902c69f63822%3Fd%3Dmm%26s%3D16%26noRedirect%3Dtrue",
+        "32x32": "https://avatar-cdn.atlassian.com/fde876d76ecc67fa791f902c69f63822?s=32&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Ffde876d76ecc67fa791f902c69f63822%3Fd%3Dmm%26s%3D32%26noRedirect%3Dtrue"
+      },
+      "displayName": "Ludovic MAÎTRE",
+      "active": true,
+      "timeZone": "Europe/Berlin"
+    },
+    "subtasks": [],
+    "customfield_11010": "English",
+    "reporter": {
+      "self": "https://mme-connect-dev.atlassian.net/rest/api/2/user?accountId=557058%3A1b4b4387-52e2-435d-a81a-f3a73f9b12d0",
+      "name": "admin",
+      "key": "admin",
+      "accountId": "557058:1b4b4387-52e2-435d-a81a-f3a73f9b12d0",
+      "emailAddress": "lmaitre@mediametrie.fr",
+      "avatarUrls": {
+        "48x48": "https://avatar-cdn.atlassian.com/fde876d76ecc67fa791f902c69f63822?s=48&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Ffde876d76ecc67fa791f902c69f63822%3Fd%3Dmm%26s%3D48%26noRedirect%3Dtrue",
+        "24x24": "https://avatar-cdn.atlassian.com/fde876d76ecc67fa791f902c69f63822?s=24&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Ffde876d76ecc67fa791f902c69f63822%3Fd%3Dmm%26s%3D24%26noRedirect%3Dtrue",
+        "16x16": "https://avatar-cdn.atlassian.com/fde876d76ecc67fa791f902c69f63822?s=16&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Ffde876d76ecc67fa791f902c69f63822%3Fd%3Dmm%26s%3D16%26noRedirect%3Dtrue",
+        "32x32": "https://avatar-cdn.atlassian.com/fde876d76ecc67fa791f902c69f63822?s=32&d=https%3A%2F%2Fsecure.gravatar.com%2Favatar%2Ffde876d76ecc67fa791f902c69f63822%3Fd%3Dmm%26s%3D32%26noRedirect%3Dtrue"
+      },
+      "displayName": "Ludovic MAÎTRE",
+      "active": true,
+      "timeZone": "Europe/Berlin"
+    },
+    "customfield_11011": null,
+    "aggregateprogress": {
+      "progress": 0,
+      "total": 0
+    },
+    "customfield_11012": {
+      "self": "https://mme-connect-dev.atlassian.net/rest/api/2/customFieldOption/10701",
+      "value": "Non",
+      "id": "10701"
+    },
+    "customfield_10200": null,
+    "customfield_11006": null,
+    "customfield_10710": null,
+    "customfield_11007": null,
+    "customfield_11008": "Laurence CLAIRE",
+    "customfield_11009": "DPCM",
+    "progress": {
+      "progress": 0,
+      "total": 0
+    },
+    "votes": {
+      "self": "https://mme-connect-dev.atlassian.net/rest/api/2/issue/GSD-73/votes",
+      "votes": 0,
+      "hasVoted": false
+    },
+    "worklog": {
+      "startAt": 0,
+      "maxResults": 20,
+      "total": 0,
+      "worklogs": []
+    },
+    "issuetype": {
+      "self": "https://mme-connect-dev.atlassian.net/rest/api/2/issuetype/10104",
+      "id": "10104",
+      "description": "For system outages or incidents. Created by JIRA Service Desk.",
+      "iconUrl": "https://mme-connect-dev.atlassian.net/secure/viewavatar?size=xsmall&avatarId=10440&avatarType=issuetype",
+      "name": "Incident",
+      "subtask": false,
+      "avatarId": 10440
+    },
+    "timespent": null,
+    "project": {
+      "self": "https://mme-connect-dev.atlassian.net/rest/api/2/project/10100",
+      "id": "10100",
+      "key": "GSD",
+      "name": "Guichet Support DSI",
+      "projectTypeKey": "service_desk",
+      "avatarUrls": {
+        "48x48": "https://mme-connect-dev.atlassian.net/secure/projectavatar?avatarId=10324",
+        "24x24": "https://mme-connect-dev.atlassian.net/secure/projectavatar?size=small&avatarId=10324",
+        "16x16": "https://mme-connect-dev.atlassian.net/secure/projectavatar?size=xsmall&avatarId=10324",
+        "32x32": "https://mme-connect-dev.atlassian.net/secure/projectavatar?size=medium&avatarId=10324"
+      }
+    },
+    "customfield_11000": null,
+    "customfield_11001": null,
+    "customfield_11002": null,
+    "aggregatetimespent": null,
+    "customfield_10310": null,
+    "customfield_11003": null,
+    "customfield_10311": null,
+    "customfield_11004": null,
+    "customfield_11005": null,
+    "customfield_10700": null,
+    "customfield_10701": null,
+    "customfield_10702": null,
+    "customfield_10703": null,
+    "resolutiondate": null,
+    "customfield_10704": null,
+    "customfield_10705": null,
+    "customfield_10309": null,
+    "customfield_10707": {
+      "id": 3,
+      "value": "DSI - DPCM - CrossMedia"
+    },
+    "workratio": -1,
+    "watches": {
+      "self": "https://mme-connect-dev.atlassian.net/rest/api/2/issue/GSD-73/watchers",
+      "watchCount": 0,
+      "isWatching": false
+    },
+    "created": "2018-11-15T10:57:19.632+0100",
+    "customfield_10140": null,
+    "customfield_10141": null,
+    "customfield_10142": null,
+    "customfield_10143": null,
+    "customfield_10144": null,
+    "customfield_10137": null,
+    "customfield_10138": null,
+    "customfield_10139": null,
+    "updated": "2018-11-15T10:57:20.446+0100",
+    "timeoriginalestimate": null,
+    "customfield_10130": null,
+    "description": null,
+    "customfield_10132": null,
+    "customfield_10133": null,
+    "customfield_10134": null,
+    "customfield_10135": null,
+    "timetracking": {},
+    "customfield_10136": null,
+    "customfield_10005": null,
+    "customfield_10126": null,
+    "customfield_10401": null,
+    "customfield_10127": null,
+    "customfield_10402": {
+      "id": 2,
+      "value": "High"
+    },
+    "customfield_10128": null,
+    "security": null,
+    "customfield_10403": {
+      "id": 5,
+      "value": "MEP"
+    },
+    "customfield_10404": null,
+    "customfield_10129": null,
+    "customfield_10800": {
+      "self": "https://mme-connect-dev.atlassian.net/rest/api/2/customFieldOption/10500",
+      "value": "Oui",
+      "id": "10500"
+    },
+    "attachment": [],
+    "customfield_10801": null,
+    "customfield_10406": null,
+    "customfield_10802": null,
+    "customfield_10803": null,
+    "customfield_10407": null,
+    "customfield_10408": null,
+    "customfield_10804": null,
+    "summary": "Test création ticket",
+    "customfield_10120": "0|i00093:",
+    "customfield_10000": "{}",
+    "customfield_10001": [],
+    "customfield_10124": null,
+    "customfield_10125": null,
+    "environment": null,
+    "customfield_10119": null,
+    "duedate": null,
+    "comment": {
+      "comments": [],
+      "maxResults": 0,
+      "total": 0,
+      "startAt": 0
+    }
+  }
+}

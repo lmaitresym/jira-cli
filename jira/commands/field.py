@@ -24,6 +24,10 @@ class Field(Base):
             self.getField()
         elif self.hasOption('addoptions'):
             self.addOptions()
+        elif self.hasOption('suggestions'):
+            self.suggestions()
+        elif self.hasOption('referenceDatas'):
+            self.referenceDatas()
         else:
             print("Nothing to do.")
 
@@ -119,3 +123,13 @@ class Field(Base):
                 results.append(datas)
             index += 1
         print(json.dumps(results))
+
+    def suggestions(self):
+        field_key = self.options['<field_key>']
+        rc, datas = self.jira_client.getSuggestions(field_key)
+        self.processResults(rc, datas)
+
+    def referenceDatas(self):
+        field_key = self.options['<field_key>']
+        rc, datas = self.jira_client.getReferenceData(field_key)
+        self.processResults(rc, datas)
