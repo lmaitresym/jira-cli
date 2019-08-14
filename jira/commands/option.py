@@ -3,8 +3,8 @@
 
 import sys
 
-reload(sys)
-sys.setdefaultencoding('utf8')
+#reload(sys)
+#sys.setdefaultencoding('utf8')
 
 import json
 from .base import Base
@@ -57,9 +57,9 @@ class Option(Base):
         option_value = self.options['<option_value>'].encode('utf-8')
         result = self.jira_client.hasOption(field_key, option_value)
         if result:
-            print 'TRUE'
+            print('TRUE')
         else:
-            print 'FALSE'
+            print('FALSE')
 
     def getOption(self):
         field_key = self.options['<field_key>']
@@ -102,7 +102,7 @@ class Option(Base):
         project_keys = self.options['<project_keys>']
         projects = project_keys.split(',')
         config = dict(scope=dict(projects=projects))
-        print "Will add %s option to field %s" % (option_value,field_key)
+        print("Will add %s option to field %s" % (option_value,field_key))
         if not self.jira_client.hasOption(field_key, option_value):
             jsonOption = dict(value=option_value, config=config)
             self.jira_client.addOption(field_key, jsonOption)

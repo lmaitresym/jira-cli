@@ -21,13 +21,13 @@ class Base(object):
 
     def loadConfiguration(self):
         if os.path.exists(self.configurationPath):
-            with open(self.configurationPath) as f:
+            with open(self.configurationPath,'rb') as f:
                 return pickle.load(f)
         else:
             return dict()
 
     def saveConfiguration(self, configuration):
-        with open(self.configurationPath, 'w') as f:
+        with open(self.configurationPath, 'wb') as f:
             pickle.dump(configuration, f)
 
     def processResults(self, rc, datas):
@@ -35,7 +35,7 @@ class Base(object):
             self.results = dict(rc=rc, datas=datas)
         else:
             if rc == 200 or rc == 204:
-                print(datas)
+                print(datas.decode())
             else:
                 print('KO - %d' % rc)
 

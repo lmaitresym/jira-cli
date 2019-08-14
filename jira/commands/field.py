@@ -112,7 +112,7 @@ class Field(Base):
                 option_values.append(line_clean)
         projects = project_keys.split(',')
         config = dict(scope=dict(projects=projects))
-        print "Will add %d options to %s" % (len(option_values),field_key)
+        print("Will add %d options to %s" % (len(option_values),field_key))
         results = []
         index = 1
         for option_value in option_values:

@@ -32,4 +32,4 @@ class Issues(Base):
         issuesKeys = list()
         for issue in issues:
             issuesKeys.append(issue['key'])
-        print json.dumps(issuesKeys)
+        print(json.dumps(issuesKeys))
