@@ -36,8 +36,7 @@ Examples:
   jira role get 18090 10080 | jq '.actors[] | .displayName'
 
 Help:
-  For help using this tool, please open an issue on the Github repository:
-  http://scm.ul.mediametrie.fr/dsi-support-portal/jira-cli
+  For help using this tool, please open an issue on the Github repository.
 """
 
 

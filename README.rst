@@ -43,8 +43,7 @@ Examples::
 Help
 ----
 
-For help using this tool, please open an issue on the Github repository:
-https://scm.ul.mediametrie.fr/dsi-support-portal/jira-cli
+For help using this tool, please open an issue on the Github repository.
 
 References
 ----------
