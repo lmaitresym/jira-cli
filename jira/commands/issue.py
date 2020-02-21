@@ -108,4 +108,4 @@ class Issue(Base):
         project_key = self.options['<project_key>']
         issue_key = self.options['<issue_type>']
         rc, datas = self.jira_client.getCreateMeta(project_key, issue_key)
-        print(datas)
+        self.processResults(rc, datas)
