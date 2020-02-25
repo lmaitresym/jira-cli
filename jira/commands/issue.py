@@ -14,8 +14,8 @@ class Issue(Base):
         self.jira_client = JiraClient(self.loadConfiguration())
         if self.hasOption('get'):
             self.getIssue()
-        elif self.hasOption('add'):
-            self.addIssue()
+        elif self.hasOption('create'):
+            self.createIssue()
         elif self.hasOption('del'):
             self.deleteIssue()
         elif self.hasOption('set'):
@@ -37,8 +37,12 @@ class Issue(Base):
             print(datas)
         self.processResults(rc, datas)
 
-    def addIssue(self):
-        pass
+    def createIssue(self):
+        json_file = self.options['<json_file>']
+        with open(json_file,'r') as issue_raw:
+            issue = json.load(issue_raw)
+            rc, datas = self.jira_client.createIssue(issue)
+            self.processResults(rc, datas)
 
     def updateIssue(self):
         issue_keys = self.options['<issue_keys>']

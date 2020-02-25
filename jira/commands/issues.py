@@ -16,6 +16,8 @@ class Issues(Base):
             self.getIssues()
         elif self.hasOption('getkeys'):
             self.getIssuesKeys()
+        elif self.hasOption('create'):
+            self.createIssues()
         else:
             print("Nothing to do.")
 
@@ -33,3 +35,11 @@ class Issues(Base):
         for issue in issues:
             issuesKeys.append(issue['key'])
         print(json.dumps(issuesKeys))
+
+    def createIssues(self):
+        json_file = self.options['<json_file>']
+        with open(json_file,'r') as issues_raw:
+            issues = json.load(issues_raw)
+            rc, datas = self.jira_client.createIssues(json_file)
+            self.processResults(rc, datas)
+
