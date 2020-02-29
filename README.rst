@@ -9,6 +9,13 @@ Purpose
 
 This is a command line client which allows to interact with the JIRA platform.
 
+Installation
+------------
+
+Preferrably in a virtualenv, install the current version:
+
+    $ pip install git+https://github.com/lmaitresym/jira-cli
+
 Usage
 -----
 
