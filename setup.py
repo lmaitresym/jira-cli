@@ -38,7 +38,7 @@ setup(
     version=__version__,
     description='A command line client for Jira.',
     long_description=long_description,
-    url='https://github.com/rastaman/jira-cli',
+    url='https://github.com/lmaitresym/jira-cli',
     author='Ludovic Maître',
     author_email='rastaman@github.com',
     license='WTFPL',
