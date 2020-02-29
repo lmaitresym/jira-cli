@@ -50,3 +50,6 @@ References
 
  * `Building Simple Command Line Interfaces in Python <https://stormpath.com/blog/building-simple-cli-interfaces-in-python>`__
  * `JIRA Cloud REST API Reference <https://docs.atlassian.com/software/jira/docs/api/REST/1000.824.0/>`__
+ * `Confluence REST API Documentation <https://docs.atlassian.com/atlassian-confluence/REST/6.6.0/>`__
+ * `The Confluence Cloud REST API <https://developer.atlassian.com/cloud/confluence/rest/>`__
+ * `Confluence REST API examples <https://developer.atlassian.com/server/confluence/confluence-rest-api-examples/>`__

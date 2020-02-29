@@ -224,3 +224,38 @@ class JiraClient:
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         r = requests.post(self.url + '/rest/api/2/issue/bulk', auth=basicAuth, json=issues)
         return r.status_code, r.content
+
+    def deletePage(self, page_id):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        headers = {
+            "Accept": "application/json"
+        }
+        r = requests.delete(self.url + 'wiki/rest/api/content/' + page_id, headers=headers, auth=basicAuth)
+        return r.status_code, r.content
+
+    def getPage(self, space_key, page_title):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        headers = {
+            "Accept": "application/json"
+        }
+        r = requests.get(self.url + 'wiki/rest/api/content?type=page&expand=body.editor&spaceKey=' + space_key + '&title=' + page_title, headers=headers, auth=basicAuth)
+        return r.status_code, r.content
+
+    def createPage(self, page_title, space_key, page_content, parent_id):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        payload = {
+            'type': 'page',
+            'title': page_title,
+            'space': {
+                'key': space_key
+            },
+            'ancestors': [{'id': parent_id}],
+            'body': {
+                'storage': {
+                    'value': page_content,
+                    'representation': 'storage'
+                }
+            }
+        }
+        r = requests.post(self.url + 'wiki/rest/api/content', auth=basicAuth, json=payload)
+        return r.status_code, r.content
