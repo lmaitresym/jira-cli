@@ -140,7 +140,7 @@ class JiraClient:
 
     def getIssuesPage(self, jql, expand, page):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        params = dict(jql=jql,fields='*all',page=page,expand=expand)
+        params = dict(jql=jql,fields='*all',startAt=page*50,expand=expand)
         r = requests.get(self.url + '/rest/api/2/search', params=params, auth=basicAuth)
         return r.status_code, r.content
 
