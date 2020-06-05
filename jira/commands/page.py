@@ -16,6 +16,8 @@ class Page(Base):
             self.getPage()
         elif self.hasOption('create'):
             self.createPage()
+        elif self.hasOption('update'):
+            self.updatePage()
         elif self.hasOption('delete'):
             self.deletePage()
         else:
@@ -40,4 +42,13 @@ class Page(Base):
         with open(page_file,'r') as page_raw:
             page_content = page_raw.read()
             rc, datas = self.jira_client.createPage(page_title, space_key, page_content, parent_id)
+            self.processResults(rc, datas)
+
+    def updatePage(self):
+        page_title = self.options['<page_title>']
+        space_key = self.options['<space_key>']
+        page_file = self.options['<page_file>']
+        with open(page_file,'r') as page_raw:
+            page_content = page_raw.read()
+            rc, datas = self.jira_client.updatePage(page_title, space_key, page_content)
             self.processResults(rc, datas)

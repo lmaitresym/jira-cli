@@ -247,6 +247,15 @@ class JiraClient:
         r = requests.get(self.url + 'wiki/rest/api/content?type=page&expand=body.editor&spaceKey=' + space_key + '&title=' + page_title, headers=headers, auth=basicAuth)
         return r.status_code, r.content
 
+    def getPageVersion(self, space_key, page_title):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        headers = {
+            "Accept": "application/json"
+        }
+        r = requests.get(self.url + 'wiki/rest/api/content?type=page&expand=version&spaceKey=' + space_key + '&title=' + page_title, headers=headers, auth=basicAuth)
+        page = json.loads(r.content)['results'][0]
+        return page
+
     def createPage(self, page_title, space_key, page_content, parent_id):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         payload = {
@@ -264,4 +273,29 @@ class JiraClient:
             }
         }
         r = requests.post(self.url + 'wiki/rest/api/content', auth=basicAuth, json=payload)
+        return r.status_code, r.content
+
+    def updatePage(self, page_title, space_key, page_content):
+        currentPageVersion = self.getPageVersion(space_key, page_title)
+        new_version = int(currentPageVersion['version']['number']) + 1
+        page_id = currentPageVersion['id']
+        #print("Version:{} Id:{}".format(new_version,page_id))
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        payload = {
+            'type': 'page',
+            'version': {
+                'number': new_version
+            },
+            'title': page_title,
+            'space': {
+                'key': space_key
+            },
+            'body': {
+                'storage': {
+                    'value': page_content,
+                    'representation': 'storage'
+                }
+            }
+        }
+        r = requests.put(self.url + 'wiki/rest/api/content/' + page_id, auth=basicAuth, json=payload)
         return r.status_code, r.content
