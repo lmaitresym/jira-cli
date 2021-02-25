@@ -23,8 +23,16 @@ class Issues(Base):
 
     def getIssues(self):
         jql = self.options['<jql>']
-        # print("Get issues for jql %s" % jql)
-        rc, datas = self.jira_client.getIssues(jql)
+        if self.hasOption('--page'):
+            page_index = int(self.options['--page'])
+        else:
+            page_index = 0
+        if self.hasOption('--page-size'):
+            page_size = int(self.options['--page-size'])
+        else:
+            page_size = 50
+        #print("Get page %s/%s of issues for jql %s" % (page_index, page_size, jql))
+        rc, datas = self.jira_client.getIssuesPage(jql, page_index, page_size)
         self.processResults(rc, datas)
 
     def getIssuesKeys(self):

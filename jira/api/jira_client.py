@@ -138,10 +138,14 @@ class JiraClient:
         r = requests.get(self.url + '/rest/api/2/search', params=params, auth=basicAuth)
         return r.status_code, r.content
 
-    def getIssuesPage(self, jql, expand, page):
+    def getIssuesPage(self, jql, page, pageSize, expand=None):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        params = dict(jql=jql,fields='*all',startAt=page*50,expand=expand)
+        params = dict(jql=jql,fields='*all',startAt=page*pageSize,maxResults=pageSize)
+        if expand is not None:
+            params['expand'] = expand
         r = requests.get(self.url + '/rest/api/2/search', params=params, auth=basicAuth)
+        #print(r.content)
+        #print(params)
         return r.status_code, r.content
 
     def updateIssue(self, issue_key, field_key, value):
