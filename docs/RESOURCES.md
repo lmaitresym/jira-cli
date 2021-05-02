@@ -10,3 +10,8 @@ Miscellaneous links to the resources used to develop this program.
 - [Access environment variables from Python - Stack Overflow](https://stackoverflow.com/questions/4906977/access-environment-variables-from-python)
 - [rest - How to do a PUT request with curl? - Stack Overflow](https://stackoverflow.com/questions/13782198/how-to-do-a-put-request-with-curl)
 - [How do I check whether a file exists using Python? - Stack Overflow](https://stackoverflow.com/questions/82831/how-do-i-check-whether-a-file-exists-using-python)
+
+## Confluence
+
+- [The Confluence Cloud REST API](https://developer.atlassian.com/cloud/confluence/rest/intro/)
+- [Confluence Server REST API](https://developer.atlassian.com/server/confluence/confluence-server-rest-api/)

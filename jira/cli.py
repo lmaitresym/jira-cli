@@ -11,7 +11,7 @@ Usage:
   jira project (get <project_key_or_id>|list)
   jira role (get <project_id> <role_id>)
   jira servicedesk (get <servicedesk_id>|list)
-  jira page (get <space_key> <page_title>|create <space_key> <page_title> <page_file> <parent_id>|delete <page_id>|update <space_key> <page_title> <page_file>)
+  jira page (get <space_key> <page_title>|create <space_key> <page_title> <parent_id> [<page_file>]|delete <page_id>|update <space_key> <page_title> <page_file>|move <space_key> <page_title> <parent_id>)
   jira -h | --help
   jira --version
 

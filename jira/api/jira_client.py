@@ -303,3 +303,23 @@ class JiraClient:
         }
         r = requests.put(self.url + 'wiki/rest/api/content/' + page_id, auth=basicAuth, json=payload)
         return r.status_code, r.content
+
+    def movePage(self, page_title, space_key, parent_id):
+        current_page = self.getPageVersion(space_key, page_title)
+        id = current_page['id']
+        version = int(current_page['version']['number']) + 1
+        title = current_page['title']
+        type = current_page['type']
+        page_id = current_page['id']
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        payload = {
+            'type': type,
+            'title': title,
+            'version': {
+                'number': version
+            },
+            'ancestors': [{'id': parent_id}]
+        }
+        r = requests.put(self.url + 'wiki/rest/api/content/' + page_id, auth=basicAuth, json=payload)
+        return r.status_code, r.content
+

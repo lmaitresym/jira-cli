@@ -4,6 +4,7 @@
 import json
 from .base import Base
 from jira.api.jira_client import JiraClient
+import sys
 
 
 class Page(Base):
@@ -20,6 +21,8 @@ class Page(Base):
             self.updatePage()
         elif self.hasOption('delete'):
             self.deletePage()
+        elif self.hasOption('move'):
+            self.movePage()
         else:
             print("Nothing to do.")
 
@@ -27,6 +30,7 @@ class Page(Base):
         page_title = self.options['<page_title>']
         space_key = self.options['<space_key>']
         rc, datas = self.jira_client.getPage(space_key,page_title)
+        #print("{} / {} / {} / {}".format(page_title, space_key, rc, self.options), file=sys.stderr)
         self.processResults(rc, datas)
 
     def deletePage(self):
@@ -37,12 +41,17 @@ class Page(Base):
     def createPage(self):
         page_title = self.options['<page_title>']
         space_key = self.options['<space_key>']
-        page_file = self.options['<page_file>']
         parent_id = self.options['<parent_id>']
-        with open(page_file,'r') as page_raw:
-            page_content = page_raw.read()
-            rc, datas = self.jira_client.createPage(page_title, space_key, page_content, parent_id)
-            self.processResults(rc, datas)
+
+        if self.hasOption('<page_file>'):
+            page_file = self.options['<page_file>']
+            with open(page_file,'r') as page_raw:
+                page_content = page_raw.read()
+        else:
+            page_content = ""
+
+        rc, datas = self.jira_client.createPage(page_title, space_key, page_content, parent_id)
+        self.processResults(rc, datas)
 
     def updatePage(self):
         page_title = self.options['<page_title>']
@@ -52,3 +61,10 @@ class Page(Base):
             page_content = page_raw.read()
             rc, datas = self.jira_client.updatePage(page_title, space_key, page_content)
             self.processResults(rc, datas)
+
+    def movePage(self):
+        page_title = self.options['<page_title>']
+        space_key = self.options['<space_key>']
+        parent_id = self.options['<parent_id>']
+        rc, datas = self.jira_client.movePage(page_title, space_key, parent_id)
+        self.processResults(rc, datas)
