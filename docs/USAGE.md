@@ -36,3 +36,13 @@ $ export END=31
 $ for i in $(seq 1 $END); do jira page move "ES" "SRE Scrum report - 2021-04-"`printf "%2.0d\n" $i |sed "s/ /0/"` "1936556287" | jq '.id'; done
 ...
 ```
+
+Move one year:
+
+```sh
+$ jira page create "ES" "SRE Scrum Reports - 2020" "782699699" | jq '.id'
+"1950124897"
+$ export END=12
+$ for i in $(seq 1 $END); do jira page move "ES" "SRE Scrum Reports - 2020-"`printf "%2.0d\n" $i |sed "s/ /0/"` "1950124897" | jq '.id'; done
+...
+```

@@ -260,7 +260,7 @@ class JiraClient:
         page = json.loads(r.content)['results'][0]
         return page
 
-    def createPage(self, page_title, space_key, page_content, parent_id):
+    def createPage(self, page_title, space_key, page_content, parent_id, labels=list()):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         payload = {
             'type': 'page',
@@ -274,12 +274,16 @@ class JiraClient:
                     'value': page_content,
                     'representation': 'storage'
                 }
+            },
+            'metadata': {
+                    'labels': labels
+                }
             }
         }
         r = requests.post(self.url + 'wiki/rest/api/content', auth=basicAuth, json=payload)
         return r.status_code, r.content
 
-    def updatePage(self, page_title, space_key, page_content):
+    def updatePage(self, page_title, space_key, page_content, labels=list()):
         currentPageVersion = self.getPageVersion(space_key, page_title)
         new_version = int(currentPageVersion['version']['number']) + 1
         page_id = currentPageVersion['id']
@@ -298,6 +302,10 @@ class JiraClient:
                 'storage': {
                     'value': page_content,
                     'representation': 'storage'
+                }
+            },
+            'metadata': {
+                    'labels': labels
                 }
             }
         }
