@@ -276,8 +276,7 @@ class JiraClient:
                 }
             },
             'metadata': {
-                    'labels': labels
-                }
+                'labels': labels
             }
         }
         r = requests.post(self.url + 'wiki/rest/api/content', auth=basicAuth, json=payload)
@@ -305,8 +304,7 @@ class JiraClient:
                 }
             },
             'metadata': {
-                    'labels': labels
-                }
+                'labels': labels
             }
         }
         r = requests.put(self.url + 'wiki/rest/api/content/' + page_id, auth=basicAuth, json=payload)
