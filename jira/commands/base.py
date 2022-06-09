@@ -11,7 +11,10 @@ class Base(object):
         self.options = options
         self.args = args
         self.kwargs = kwargs
-        self.configurationPath = os.environ['HOME'] + '/.jira'
+        try:
+            self.configurationPath = os.environ['JIRA_CONFIG']
+        except KeyError:
+            self.configurationPath = os.environ['HOME'] + '/.jira'
         self.results = None
         self.headless = False
 
@@ -51,7 +54,6 @@ class Base(object):
     def hasOption(self, option):
         return option in self.options and self.options[option]
 
-    # Late coding
     def getOption(self, option, defaultValue=None):
         if self.hasOption(option):
             return self.options[option]

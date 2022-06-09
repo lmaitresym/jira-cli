@@ -28,6 +28,8 @@ class Field(Base):
             self.suggestions()
         elif self.hasOption('referenceDatas'):
             self.referenceDatas()
+        elif self.hasOption('getcontext'):
+            self.getContexts()
         else:
             print("Nothing to do.")
 
@@ -57,6 +59,11 @@ class Field(Base):
     def getOptions(self):
         field_key = self.options['<field_key>']
         rc, datas = self.jira_client.getFieldOptions(field_key)
+        self.processResults(rc, datas)
+
+    def getContexts(self):
+        field_key = self.options['<field_key>']
+        rc, datas = self.jira_client.getFieldContexts(field_key)
         self.processResults(rc, datas)
 
     def addProjectToOptions(self):

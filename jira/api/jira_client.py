@@ -88,6 +88,11 @@ class JiraClient:
         r = requests.get(self.url + '/rest/api/2/field/' + field_key + '/option?maxResults=1000', auth=basicAuth)
         return r.status_code, r.content
 
+    def getFieldContexts(self, field_key):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        r = requests.get(self.url + '/rest/api/3/field/' + field_key + '/context', auth=basicAuth)
+        return r.status_code, r.content
+
     def addOption(self, field_key, option):
         basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         r = requests.post(self.url + '/rest/api/2/field/' + field_key + '/option', auth=basicAuth, json=option)
@@ -329,3 +334,67 @@ class JiraClient:
         r = requests.put(self.url + 'wiki/rest/api/content/' + page_id, auth=basicAuth, json=payload)
         return r.status_code, r.content
 
+    def getPageLabels(self, page_title, space_key):
+        current_page = self.getPageVersion(space_key, page_title)
+        page_id = current_page['id']
+        return self.getPageLabelsById(page_id)
+
+    def getPageLabelsById(self, page_id):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        r = requests.get(self.url + 'wiki/rest/api/content/' + page_id + '/label', auth=basicAuth)
+        if r.status_code != 200:
+            return []
+        return json.loads(r.content)['results']
+
+    def addPageLabel(self, page_title, space_key, label):
+        current_page = self.getPageVersion(space_key, page_title)
+        id = current_page['id']
+        return self.addPageLabelById(id, label)
+
+    def addPageLabelById(self, page_id, label):
+        current_labels = self.getPageLabelsById(page_id)
+        payload = [
+            {
+                'prefix': 'global',
+                'name': label
+            }
+        ]
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        r = requests.post(self.url + 'wiki/rest/api/content/' + page_id + '/label', auth=basicAuth, json=payload)
+        return r.status_code, r.content
+
+    def getPageChildrenById(self, page_id):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        r = requests.get(self.url + 'wiki/rest/api/content/' + page_id + '/child?expand=page', auth=basicAuth)
+        if r.status_code != 200:
+            return []
+        return json.loads(r.content)['page']['results']
+
+    def getPageChildren(self, page_title, space_key):
+        current_page = self.getPageVersion(space_key, page_title)
+        id = current_page['id']
+        return self.getPageChildrenById(id)
+
+    def getAllPageChildren(self, page_title, space_key):
+        current_page = self.getPageVersion(space_key, page_title)
+        id = current_page['id']
+        return self.getAllPageChildrenById(id)
+
+    def getAllPageChildrenById(self, page_id):
+        children = self.getPageChildrenById(page_id)
+        allChildren = list(children)
+        for child in children:
+            child_children = self.getPageChildrenById(child['id'])
+            allChildren.extend(child_children)
+        return allChildren
+
+    def getSpace(self, space_id=None):
+        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
+        headers = {
+            "Accept": "application/json"
+        }
+        queryParams = ''
+        if space_id is not None:
+            queryParams += '?spaceKey=' + space_id
+        r = requests.get(self.url + 'wiki/rest/api/space' + queryParams, headers=headers, auth=basicAuth)
+        return r.status_code, r.content

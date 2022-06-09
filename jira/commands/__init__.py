@@ -7,3 +7,5 @@ from .project import *
 from .role import *
 from .servicedesk import *
 from .page import *
+from .space import *
+#from . import __version__ as VERSION
