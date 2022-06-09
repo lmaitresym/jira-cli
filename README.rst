@@ -31,18 +31,19 @@ All commands::
 
     $ jira
     Usage:
-      jira session (login <url> <username> <password>|logout|dump)
-      jira field (get <field_key_or_id_or_name>|getoptions <field_key>|addprojectoptions <field_key> <project_id>|delprojectoptions <field_key> <project_id>|loadoptions <field_key> <options_file> <project_ids>|addoptions <field_key> <options_file> <project_keys>|suggestions <field_key>|referenceDatas <field_key>)
-      jira option (get <field_key> <option_id>|add <field_key> <option_value> <project_keys>|del <field_key> <option_id>|exist <field_key> <option_value>|replace <field_key> <option_to_replace> <option_to_use> <jql_filter>|getid <field_key> <option_value>)
-      jira options add <field_key> <options_file> <project_keys>
-      jira issues (get <jql>|getkeys <jql>|create <json_file>)
-      jira issue (get <issue_key>|del <issue_key>|set <issue_keys> <field_key> <value_or_field_key>|createmeta <project_key> <issue_type>|create <json_file>)
-      jira project (get <project_key_or_id>|list)
-      jira role (get <project_id> <role_id>)
-      jira servicedesk (get <servicedesk_id>|list)
-      jira page (get <space_key> <page_title>|create <page_title> <space_key> <page_file> <parent_id>|delete <page_id>)
-      jira -h | --help
-      jira --version
+        jira session (login <url> <username> <password>|logout|dump)
+        jira field (get <field_key_or_id_or_name>|getoptions <field_key>|addprojectoptions <field_key> <project_id>|delprojectoptions <field_key> <project_id>|loadoptions <field_key> <options_file> <project_ids>|addoptions <field_key> <options_file> <project_keys>|suggestions <field_key>|referenceDatas <field_key>|getcontext <field_key>)
+        jira option (get <field_key> <option_id>|add <field_key> <option_value> <project_keys>|del <field_key> <option_id>|exist <field_key> <option_value>|replace <field_key> <option_to_replace> <option_to_use> <jql_filter>|getid <field_key> <option_value>)
+        jira options add <field_key> <options_file> <project_keys>
+        jira issues (get <jql> [--page=<page_index>] [--page-size=<page_size>]|getkeys <jql>|create <json_file>)
+        jira issue (get <issue_key>|del <issue_key>|set <issue_keys> <field_key> <value_or_field_key>|createmeta <project_key> <issue_type>|create <json_file>)
+        jira project (get <project_key_or_id>|list)
+        jira role (get <project_id> <role_id>)
+        jira servicedesk (get <servicedesk_id>|list)
+        jira page (get <space_key> <page_title>|create <space_key> <page_title> <parent_id> [<page_file>]|delete <page_id>|update <space_key> <page_title> <page_file>|move <space_key> <page_title> <parent_id>)
+        jira space (get <space_key>|list)
+        jira -h | --help
+        jira --version
 
 
 Examples::
