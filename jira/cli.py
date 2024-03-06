@@ -3,8 +3,8 @@ jira
 
 Usage:
   jira session (login <url> <username> <password>|logout|dump)
-  jira field (get <field_key_or_id_or_name>|getoptions <field_key>|addprojectoptions <field_key> <project_id>|delprojectoptions <field_key> <project_id>|loadoptions <field_key> <options_file> <project_ids>|addoptions <field_key> <options_file> <project_keys>|suggestions <field_key>|referenceDatas <field_key>|getcontext <field_key>)
-  jira option (get <field_key> <option_id>|add <field_key> <option_value> <project_keys>|del <field_key> <option_id>|exist <field_key> <option_value>|replace <field_key> <option_to_replace> <option_to_use> <jql_filter>|getid <field_key> <option_value>)
+  jira field (get <field_key_or_id_or_name>|getoptions <field_key> <context>|addprojectoptions <field_key> <project_id>|delprojectoptions <field_key> <project_id>|loadoptions <field_key> <options_file> <project_ids>|addoptions <field_key> <options_file> <project_keys>|suggestions <field_key>|referenceDatas <field_key>|getcontexts <field_key>|create <name> <description> <searcher_key> <field_type>)
+  jira option (get <field_key> <option_id>|add <field_key> <option_value> <project_keys>|del <field_key> <option_id>|exist <field_key> <option_value>|replace <field_key> <option_to_replace> <option_to_use> <jql_filter>|getid <field_key> <option_value>|addcascading <field_key> <context_id> <parent_id> <option_value>|delcascading <field_key> <context_id> <parent_id> <option_id>)
   jira options add <field_key> <options_file> <project_keys>
   jira issues (get <jql> [--page=<page_index>] [--page-size=<page_size>]|getkeys <jql>|create <json_file>)
   jira issue (get <issue_key>|del <issue_key>|set <issue_keys> <field_key> <value_or_field_key>|createmeta <project_key> <issue_type>|create <json_file>)

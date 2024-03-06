@@ -11,6 +11,7 @@ class JiraClient:
         if configuration is not None and 'url' in configuration:
             self.url = configuration['url']
         self.session = None
+        self.auth = HTTPBasicAuth(self.configuration['username'], self.configuration['password'])
         # self.enableLogging()
 
     def enableLogging(self):
@@ -45,77 +46,106 @@ class JiraClient:
         return 200
 
     def logout(self):
-        #basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        #r = requests.delete(self.url + '/rest/auth/1/session', auth=basicAuth)
         return 500
 
     def dump(self):
         return self.configuration
 
     def getFields(self):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.get(self.url + '/rest/api/2/field', auth=basicAuth)
+        r = requests.get(f"{self.url}/rest/api/2/field", auth=self.auth)
         return r.status_code, r.content
 
     def getReferenceData(self, field_key):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         params = {
             'fieldName': field_key
         }
-        r = requests.get(self.url + '/rest/api/3/jql/autocompletedata', params=params, auth=basicAuth)
+        r = requests.get(f"{self.url}/rest/api/3/jql/autocompletedata", params=params, auth=self.auth)
         return r.status_code, r.content
 
     def getSuggestions(self, field_key):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         params = {
             'fieldName': field_key
         }
-        r = requests.get(self.url + '/rest/api/3/jql/autocompletedata/suggestions', params=params, auth=basicAuth)
+        r = requests.get(f"{self.url}/rest/api/3/jql/autocompletedata/suggestions", params=params, auth=self.auth)
         return r.status_code, r.content
 
     def getFieldOption(self, field_key, option_id):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.get(self.url + '/rest/api/2/field/' + field_key + '/option/' + str(option_id), auth=basicAuth)
+        r = requests.get(f"{self.url}/rest/api/2/field/{field_key}/option/{option_id}", auth=self.auth)
         return r.status_code, r.content
 
     def deleteFieldOption(self, field_key, option_id):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.delete(self.url + '/rest/api/2/field/' + field_key + '/option/' + str(option_id), auth=basicAuth)
+        r = requests.delete(f"{self.url}/rest/api/2/field/{field_key}/option/{option_id}", auth=self.auth)
         return r.status_code, r.text
 
-    def getFieldOptions(self, field_key):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.get(self.url + '/rest/api/2/field/' + field_key + '/option?maxResults=1000', auth=basicAuth)
-        return r.status_code, r.content
+    def getFieldOptions(self, field_key, context):
+        if context is None:
+            base_uri = f"{self.url}/rest/api/3/customFieldOption/{field_key}"
+        else:
+            base_uri = f"{self.url}/rest/api/3/field/{field_key}/context/{context}/option"
+
+        isLast = False
+        startAtIdx = 0
+        maxResults = 1000
+        rc = 0
+        all_options = list()
+        error_message = None
+        while not isLast:
+            uri = f"{base_uri}?startAt={startAtIdx}&maxResults={maxResults}"
+            r = requests.get(uri, auth=self.auth)
+            rc = r.status_code
+            if rc == 200:
+                payload = json.loads(r.content)
+                all_options = all_options + payload['values']
+                isLast = payload['isLast']
+                if not isLast:
+                    startAtIdx = len(all_options)
+            else:
+                error_message = r.content
+                break
+        if rc != 200:
+            return rc, error_message
+        return rc, json.dumps(all_options)
 
     def getFieldContexts(self, field_key):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.get(self.url + '/rest/api/3/field/' + field_key + '/context', auth=basicAuth)
+        r = requests.get(f"{self.url}/rest/api/3/field/{field_key}/context", auth=self.auth)
         return r.status_code, r.content
 
     def addOption(self, field_key, option):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.post(self.url + '/rest/api/2/field/' + field_key + '/option', auth=basicAuth, json=option)
+        r = requests.post(f"{self.url}/rest/api/2/field/{field_key}/option", auth=self.auth, json=option)
+        return r.status_code, r.content
+
+    def addCascadingOption(self, field_key, contextId, parentOptionId, optionValue):
+        json = {
+            'options': [
+                {
+                    'value': optionValue,
+                    'optionId': parentOptionId,
+                    'disabled': False
+                }
+            ]
+        }
+        r = requests.post(f"{self.url}/rest/api/3/field/{field_key}/context/{contextId}/option", auth=self.auth, json=json)
+        return r.status_code, r.content
+
+    def delCascadingOption(self, field_key, contextId, parentOptionId, optionId):
+        r = requests.delete(f"{self.url}/rest/api/3/field/{field_key}/context/{contextId}/option/{optionId}", auth=self.auth)
         return r.status_code, r.content
 
     def addOptionWithId(self, field_key, option, option_id):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.put(self.url + '/rest/api/2/field/' + field_key + '/option/' + option_id, auth=basicAuth, json=option)
+        r = requests.put(f"{self.url}/rest/api/2/field/{field_key}/option/{option_id}", auth=self.auth, json=option)
         return r.status_code, r.content
 
     def updateFieldOption(self, field_key, option):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.put(self.url + '/rest/api/2/field/' + field_key + '/option/' + str(option['id']), auth=basicAuth, json=option)
+        r = requests.put(f"{self.url}/rest/api/2/field/{field_key}/option/{option['id']}", auth=self.auth, json=option)
         return r.status_code, r.content
 
     def replaceOption(self, field_key, option_to_replace, option_to_use, jql_filter):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         params = {
-            'replaceWith': option_to_use,
-            'jql': jql_filter
-            }
-        r = requests.delete(self.url + '/rest/api/2/field/' + field_key + '/option/' + option_to_replace + '/issue',
-                            auth=basicAuth,
+            "replaceWith": option_to_use,
+            "jql": jql_filter
+        }
+        r = requests.delete(f"{self.url}/rest/api/2/field/{field_key}/option/{option_to_replace}/issue",
+                            auth=self.auth,
                             params=params)
         if r.status_code == 303:
             print('Get task status here: %s' % r.content)
@@ -127,59 +157,70 @@ class JiraClient:
     def addProjectToFieldOptions(self, field_key, project_id):
         return
 
+    def createCustomField(self, name, description, searcherKey, fieldType):
+        json = {
+            "description": description,
+            "name": name,
+            "searcherKey": searcherKey,
+            "type": fieldType
+        }
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+        r = requests.post(f"{self.url}/rest/api/3/field", headers=headers, json=json, auth=self.auth)
+        return r.status_code, r.content
+
     def getIssue(self, issue_key):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.get(self.url + '/rest/api/2/issue/' + issue_key, auth=basicAuth)
+        r = requests.get(f"{self.url}/rest/api/2/issue/{issue_key}", auth=self.auth)
         return r.status_code, r.content
 
     def deleteIssue(self, issue_key):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.delete(self.url + '/rest/api/2/issue/' + issue_key, auth=basicAuth)
+        r = requests.delete(f"{self.url}/rest/api/2/issue/{issue_key}", auth=self.auth)
         return r.status_code, r.content
 
     def getIssues(self, jql):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        params = dict(jql=jql,fields='*all')
-        r = requests.get(self.url + '/rest/api/2/search', params=params, auth=basicAuth)
+        params = { 
+            "jql": jql,
+            "fields": "*all"
+        }
+        r = requests.get(f"{self.url}/rest/api/2/search", params=params, auth=self.auth)
         return r.status_code, r.content
 
     def getIssuesPage(self, jql, page, pageSize, expand=None):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        params = dict(jql=jql,fields='*all',startAt=page*pageSize,maxResults=pageSize)
+        params = {
+            "jql": jql,
+            "fields": "*all",
+            "startAt": page*pageSize,
+            "maxResults": pageSize
+        }
         if expand is not None:
             params['expand'] = expand
-        r = requests.get(self.url + '/rest/api/2/search', params=params, auth=basicAuth)
-        #print(r.content)
-        #print(params)
+        r = requests.get(f"{self.url}/rest/api/2/search", params=params, auth=self.auth)
         return r.status_code, r.content
 
     def updateIssue(self, issue_key, field_key, value):
-        payload = dict(fields=dict())
+        payload = { "fields": {} }
         payload['fields'][field_key] = value
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.put(self.url + '/rest/api/2/issue/' + issue_key, json=payload, auth=basicAuth)
+        r = requests.put(f"{self.url}/rest/api/2/issue/{issue_key}", json=payload, auth=self.auth)
         return r.status_code, r.content
 
     def getCreateMeta(self, project_key, issuetype_key):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        projectParameter = None
-        try:
-            projectParameter = 'projectIds=%d' % int(project_key)
-        except ValueError:
-            projectParameter = 'projectKeys=%s' % str(project_key)
-        issueTypeParameter = None
-        try:
-            issueTypeParameter = 'issuetypeIds=%s' % int(issuetype_key)
-        except ValueError:
-            issueTypeParameter = 'issuetypeNames=%s' % str(issuetype_key)
-        createMetaURL = self.url + '/rest/api/2/issue/createmeta?expand=projects.issuetypes.fields&' + projectParameter + '&' + issueTypeParameter
-        #print("URL: %s" % createMetaURL)
-        r = requests.get(createMetaURL, auth=basicAuth)
+        params = {
+            "expand": "projects.issuetypes.fields"
+        }
+        if isinstance(project_key, int):
+            params['projectIds'] = project_key
+        elif isinstance(project_key, str):
+            params['projectKeys'] = project_key
+        if isinstance(issuetype_key, int):
+            params['issuetypeIds'] = issuetype_key
+        elif isinstance(issuetype_key, str):
+            params['issuetypeNames'] = issuetype_key
+        r = requests.get(f"{self.url}/rest/api/2/issue/createmeta", params=params, auth=self.auth)
         return r.status_code, r.content
 
     def getFieldIdFromKeyAndMeta(self, field_key, issue_meta):
-        #print('Type: ' + str(type(issue_meta)))
-        #print(issue_meta)
         fields = issue_meta['projects'][0]['issuetypes'][0]['fields']
         for f in fields:
             field = fields[f]
@@ -206,74 +247,80 @@ class JiraClient:
         return -1
 
     def getProject(self, project_key_or_id):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.get(self.url + '/rest/api/2/project/' + project_key_or_id, auth=basicAuth)
+        params = {
+            "expand": [
+                "description",
+                "issueTypes",
+                "lead",
+                "projectKeys",
+                "issueTypeHierarchy"
+            ]
+        }
+        r = requests.get(f"{self.url}/rest/api/2/project/{project_key_or_id}", params=params, auth=self.auth)
         return r.status_code, r.content
 
     def listProjects(self):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.get(self.url + '/rest/api/2/project', auth=basicAuth)
+        r = requests.get(f"{self.url}/rest/api/2/project", auth=self.auth)
         return r.status_code, r.content
 
     def getRole(self, project_id, role_id):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.get(self.url + '/rest/api/2/project/' + project_id + '/role/' + role_id, auth=basicAuth)
+        r = requests.get(f"{self.url}/rest/api/2/project/{project_id}/role/{role_id}", auth=self.auth)
         return r.status_code, r.content
 
     def getServiceDesk(self, servicedesk_id):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.get(self.url + '/rest/servicedeskapi/servicedesk/' + servicedesk_id, auth=basicAuth)
+        r = requests.get(f"{self.url}/rest/servicedeskapi/servicedesk/{servicedesk_id}", auth=self.auth)
         return r.status_code, r.content
 
     def listServiceDesks(self):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.get(self.url + '/rest/servicedeskapi/servicedesk', auth=basicAuth)
+        r = requests.get(f"{self.url}/rest/servicedeskapi/servicedesk", auth=self.auth)
         return r.status_code, r.content
 
     def createIssue(self, issue):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.post(self.url + '/rest/api/2/issue', auth=basicAuth, json=issue)
+        r = requests.post(f"{self.url}/rest/api/2/issue", auth=self.auth, json=issue)
         return r.status_code, r.content
 
     def createIssues(self, issues):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.post(self.url + '/rest/api/2/issue/bulk', auth=basicAuth, json=issues)
+        r = requests.post(f"{self.url}/rest/api/2/issue/bulk", auth=self.auth, json=issues)
         return r.status_code, r.content
 
     def deletePage(self, page_id):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        headers = {
-            "Accept": "application/json"
-        }
-        r = requests.delete(self.url + 'wiki/rest/api/content/' + page_id, headers=headers, auth=basicAuth)
+        headers = { "Accept": "application/json" }
+        r = requests.delete(f"{self.url}/wiki/rest/api/content/{page_id}", headers=headers, auth=self.auth)
         return r.status_code, r.content
 
     def getPage(self, space_key, page_title):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        headers = {
-            "Accept": "application/json"
+        headers = { "Accept": "application/json" }
+        params = {
+            "type": "page",
+            "expand": "body.editor",
+            "spaceKey": space_key,
+            "title": page_title
         }
-        r = requests.get(self.url + 'wiki/rest/api/content?type=page&expand=body.editor&spaceKey=' + space_key + '&title=' + page_title, headers=headers, auth=basicAuth)
+        r = requests.get(f"{self.url}/wiki/rest/api/content", headers=headers, params=params, auth=self.auth)
         return r.status_code, r.content
 
     def getPageVersion(self, space_key, page_title):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        headers = {
-            "Accept": "application/json"
+        headers = { "Accept": "application/json" }
+        params = {
+            "type": "page",
+            "expand": "version",
+            "spaceKey": space_key,
+            "title": page_title
         }
-        r = requests.get(self.url + 'wiki/rest/api/content?type=page&expand=version&spaceKey=' + space_key + '&title=' + page_title, headers=headers, auth=basicAuth)
+        r = requests.get(f"{self.url}/wiki/rest/api/content", headers=headers, params=params, auth=self.auth)
         page = json.loads(r.content)['results'][0]
         return page
 
     def createPage(self, page_title, space_key, page_content, parent_id, labels=list()):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         payload = {
             'type': 'page',
             'title': page_title,
             'space': {
                 'key': space_key
             },
-            'ancestors': [{'id': parent_id}],
+            'ancestors': [
+                {'id': parent_id}
+            ],
             'body': {
                 'storage': {
                     'value': page_content,
@@ -284,15 +331,13 @@ class JiraClient:
                 'labels': labels
             }
         }
-        r = requests.post(self.url + 'wiki/rest/api/content', auth=basicAuth, json=payload)
+        r = requests.post(f"{self.url}/wiki/rest/api/content", auth=self.auth, json=payload)
         return r.status_code, r.content
 
     def updatePage(self, page_title, space_key, page_content, labels=list()):
         currentPageVersion = self.getPageVersion(space_key, page_title)
         new_version = int(currentPageVersion['version']['number']) + 1
         page_id = currentPageVersion['id']
-        #print("Version:{} Id:{}".format(new_version,page_id))
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         payload = {
             'type': 'page',
             'version': {
@@ -312,7 +357,7 @@ class JiraClient:
                 'labels': labels
             }
         }
-        r = requests.put(self.url + 'wiki/rest/api/content/' + page_id, auth=basicAuth, json=payload)
+        r = requests.put(f"{self.url}/wiki/rest/api/content/{page_id}", auth=self.auth, json=payload)
         return r.status_code, r.content
 
     def movePage(self, page_title, space_key, parent_id):
@@ -322,7 +367,6 @@ class JiraClient:
         title = current_page['title']
         type = current_page['type']
         page_id = current_page['id']
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
         payload = {
             'type': type,
             'title': title,
@@ -331,7 +375,7 @@ class JiraClient:
             },
             'ancestors': [{'id': parent_id}]
         }
-        r = requests.put(self.url + 'wiki/rest/api/content/' + page_id, auth=basicAuth, json=payload)
+        r = requests.put(f"{self.url}/wiki/rest/api/content/{page_id}", auth=self.auth, json=payload)
         return r.status_code, r.content
 
     def getPageLabels(self, page_title, space_key):
@@ -340,8 +384,7 @@ class JiraClient:
         return self.getPageLabelsById(page_id)
 
     def getPageLabelsById(self, page_id):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.get(self.url + 'wiki/rest/api/content/' + page_id + '/label', auth=basicAuth)
+        r = requests.get(f"{self.url}/wiki/rest/api/content/{page_id}/label", auth=self.auth)
         if r.status_code != 200:
             return []
         return json.loads(r.content)['results']
@@ -359,13 +402,12 @@ class JiraClient:
                 'name': label
             }
         ]
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.post(self.url + 'wiki/rest/api/content/' + page_id + '/label', auth=basicAuth, json=payload)
+        r = requests.post(f"{self.url}/wiki/rest/api/content/{page_id}/label", auth=self.auth, json=payload)
         return r.status_code, r.content
 
     def getPageChildrenById(self, page_id):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        r = requests.get(self.url + 'wiki/rest/api/content/' + page_id + '/child?expand=page', auth=basicAuth)
+        params = { 'expand': 'page' }
+        r = requests.get(f"{self.url}/wiki/rest/api/content/{page_id}/child", params=params, auth=self.auth)
         if r.status_code != 200:
             return []
         return json.loads(r.content)['page']['results']
@@ -388,13 +430,8 @@ class JiraClient:
             allChildren.extend(child_children)
         return allChildren
 
-    def getSpace(self, space_id=None):
-        basicAuth = HTTPBasicAuth(self.configuration['username'],self.configuration['password'])
-        headers = {
-            "Accept": "application/json"
-        }
-        queryParams = ''
-        if space_id is not None:
-            queryParams += '?spaceKey=' + space_id
-        r = requests.get(self.url + 'wiki/rest/api/space' + queryParams, headers=headers, auth=basicAuth)
+    def getSpace(self, space_id):
+        headers = { "Accept": "application/json" }
+        params = { 'spaceKey': space_id }
+        r = requests.get(f"{self.url}/wiki/rest/api/space", headers=headers, params=params, auth=self.auth)
         return r.status_code, r.content

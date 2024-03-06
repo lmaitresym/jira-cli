@@ -37,9 +37,16 @@ class Base(object):
         if self.headless:
             self.results = dict(rc=rc, datas=datas)
         else:
-            if rc == 200 or rc == 204:
-                print(datas.decode())
+            if rc == 200 or rc == 204 or rc == 201:
+                if isinstance(datas, str):
+                    print(datas)
+                else:
+                    print(datas.decode())
             else:
+                if isinstance(datas, str):
+                    print(datas)
+                else:
+                    print(datas.decode())
                 print('KO - %d' % rc)
 
     def processResultCode(self, rc):

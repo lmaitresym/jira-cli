@@ -29,8 +29,30 @@ class Option(Base):
             self.existOption()
         elif self.hasOption('getid'):
             self.getOptionId()
+        elif self.hasOption('addcascading'):
+            self.addCascadingOption()
+        elif self.hasOption('delcascading'):
+            self.delCascadingOption()
         else:
             print("Nothing to do.")
+
+    # addcascading <field_key> <context_id> <parent_id> <option_value>
+    def addCascadingOption(self):
+        field_key = self.options['<field_key>']
+        context_id = self.options['<context_id>']
+        parent_id = self.options['<parent_id>']
+        option_value = self.options['<option_value>']
+        rc, datas = self.jira_client.addCascadingOption(field_key, context_id, parent_id, option_value)
+        self.processResults(rc, datas)
+
+    # delcascading <field_key> <context_id> <parent_id> <option_value>
+    def delCascadingOption(self):
+        field_key = self.options['<field_key>']
+        context_id = self.options['<context_id>']
+        parent_id = self.options['<parent_id>']
+        option_id = self.options['<option_id>']
+        rc, datas = self.jira_client.delCascadingOption(field_key, context_id, parent_id, option_id)
+        self.processResults(rc, datas)
 
     def getOptionId(self):
         field_key = self.options['<field_key>']

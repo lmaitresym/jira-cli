@@ -148,3 +148,6 @@ dmypy.json
 
 # Temp files
 tmp/
+
+# JIRA Config
+.jira*

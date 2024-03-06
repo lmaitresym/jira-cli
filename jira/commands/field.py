@@ -28,8 +28,10 @@ class Field(Base):
             self.suggestions()
         elif self.hasOption('referenceDatas'):
             self.referenceDatas()
-        elif self.hasOption('getcontext'):
+        elif self.hasOption('getcontexts'):
             self.getContexts()
+        elif self.hasOption('create'):
+            self.createField()
         else:
             print("Nothing to do.")
 
@@ -42,6 +44,14 @@ class Field(Base):
             if field['id'] == field_key_or_id_or_name or field['key'] == field_key_or_id_or_name or field['name'] == field_key_or_id_or_name:
                 results.append(field)
         print(json.dumps(results))
+
+    def createField(self):
+        name = self.options['<name>']
+        description = self.options['<description>']
+        searcherKey = self.options['<searcher_key>']
+        fieldType = self.options['<field_type>']
+        rc, datas = self.jira_client.createCustomField( name, description, searcherKey, fieldType)
+        self.processResults(rc, datas)
 
     def loadOptions(self):
         field_key = self.options['<field_key>']
@@ -58,7 +68,8 @@ class Field(Base):
 
     def getOptions(self):
         field_key = self.options['<field_key>']
-        rc, datas = self.jira_client.getFieldOptions(field_key)
+        context = self.options['<context>']
+        rc, datas = self.jira_client.getFieldOptions(field_key, context)
         self.processResults(rc, datas)
 
     def getContexts(self):
@@ -106,7 +117,7 @@ class Field(Base):
                 return idx
             idx = idx+1
         return -1
-    
+
     def addOptions(self):
         field_key = self.options['<field_key>']
         options_file = self.options['<options_file>']
