@@ -1,7 +1,7 @@
 import requests
 import json
 from requests.auth import HTTPBasicAuth
-
+import sys
 
 class JiraClient:
 
@@ -45,14 +45,11 @@ class JiraClient:
         self.configuration['password'] = password
         return 200
 
-    def logout(self):
-        return 500
-
     def dump(self):
         return self.configuration
 
     def getFields(self):
-        r = requests.get(f"{self.url}/rest/api/2/field", auth=self.auth)
+        r = requests.get(f"{self.url}/rest/api/3/field", auth=self.auth)
         return r.status_code, r.content
 
     def getReferenceData(self, field_key):
@@ -70,18 +67,18 @@ class JiraClient:
         return r.status_code, r.content
 
     def getFieldOption(self, field_key, option_id):
-        r = requests.get(f"{self.url}/rest/api/2/field/{field_key}/option/{option_id}", auth=self.auth)
+        r = requests.get(f"{self.url}/rest/api/3/field/{field_key}/option/{option_id}", auth=self.auth)
         return r.status_code, r.content
 
     def deleteFieldOption(self, field_key, option_id):
-        r = requests.delete(f"{self.url}/rest/api/2/field/{field_key}/option/{option_id}", auth=self.auth)
+        r = requests.delete(f"{self.url}/rest/api/3/field/{field_key}/option/{option_id}", auth=self.auth)
         return r.status_code, r.text
 
     def getFieldOptions(self, field_key, context):
         if context is None:
-            base_uri = f"{self.url}/rest/api/3/customFieldOption/{field_key}"
+            uri = f"{self.url}/rest/api/3/customFieldOption/{field_key}"
         else:
-            base_uri = f"{self.url}/rest/api/3/field/{field_key}/context/{context}/option"
+            uri = f"{self.url}/rest/api/3/field/{field_key}/context/{context}/option"
 
         isLast = False
         startAtIdx = 0
@@ -90,8 +87,11 @@ class JiraClient:
         all_options = list()
         error_message = None
         while not isLast:
-            uri = f"{base_uri}?startAt={startAtIdx}&maxResults={maxResults}"
-            r = requests.get(uri, auth=self.auth)
+            params = {
+                "startAt": startAtIdx,
+                "maxResults": maxResults
+            }
+            r = requests.get(uri, params=params, auth=self.auth)
             rc = r.status_code
             if rc == 200:
                 payload = json.loads(r.content)
@@ -111,7 +111,7 @@ class JiraClient:
         return r.status_code, r.content
 
     def addOption(self, field_key, option):
-        r = requests.post(f"{self.url}/rest/api/2/field/{field_key}/option", auth=self.auth, json=option)
+        r = requests.post(f"{self.url}/rest/api/3/field/{field_key}/option", auth=self.auth, json=option)
         return r.status_code, r.content
 
     def addCascadingOption(self, field_key, contextId, parentOptionId, optionValue):
@@ -132,11 +132,11 @@ class JiraClient:
         return r.status_code, r.content
 
     def addOptionWithId(self, field_key, option, option_id):
-        r = requests.put(f"{self.url}/rest/api/2/field/{field_key}/option/{option_id}", auth=self.auth, json=option)
+        r = requests.put(f"{self.url}/rest/api/3/field/{field_key}/option/{option_id}", auth=self.auth, json=option)
         return r.status_code, r.content
 
     def updateFieldOption(self, field_key, option):
-        r = requests.put(f"{self.url}/rest/api/2/field/{field_key}/option/{option['id']}", auth=self.auth, json=option)
+        r = requests.put(f"{self.url}/rest/api/3/field/{field_key}/option/{option['id']}", auth=self.auth, json=option)
         return r.status_code, r.content
 
     def replaceOption(self, field_key, option_to_replace, option_to_use, jql_filter):
@@ -144,18 +144,12 @@ class JiraClient:
             "replaceWith": option_to_use,
             "jql": jql_filter
         }
-        r = requests.delete(f"{self.url}/rest/api/2/field/{field_key}/option/{option_to_replace}/issue",
+        r = requests.delete(f"{self.url}/rest/api/3/field/{field_key}/option/{option_to_replace}/issue",
                             auth=self.auth,
                             params=params)
         if r.status_code == 303:
             print('Get task status here: %s' % r.content)
         return r.status_code, r.content
-
-    def manageOptionsForProject(self, field_key, project_id, verb):
-        return
-
-    def addProjectToFieldOptions(self, field_key, project_id):
-        return
 
     def createCustomField(self, name, description, searcherKey, fieldType):
         json = {
@@ -171,21 +165,55 @@ class JiraClient:
         r = requests.post(f"{self.url}/rest/api/3/field", headers=headers, json=json, auth=self.auth)
         return r.status_code, r.content
 
-    def getIssue(self, issue_key):
-        r = requests.get(f"{self.url}/rest/api/2/issue/{issue_key}", auth=self.auth)
+    def getIssue(self, issue_key, fields):
+        params = {
+            "fields": fields
+        }
+        r = requests.get(f"{self.url}/rest/api/3/issue/{issue_key}", params=params, auth=self.auth)
         return r.status_code, r.content
 
     def deleteIssue(self, issue_key):
-        r = requests.delete(f"{self.url}/rest/api/2/issue/{issue_key}", auth=self.auth)
+        r = requests.delete(f"{self.url}/rest/api/3/issue/{issue_key}", auth=self.auth)
         return r.status_code, r.content
 
-    def getIssues(self, jql):
+    def getIssues(self, jql, page_size, fields):
+        uri = f"{self.url}/rest/api/3/search"
+        total = 999999
+        startAtIdx = 0
+        rc = 0
+        maxResults = page_size
         params = { 
             "jql": jql,
-            "fields": "*all"
+            "fields": fields,
+            "maxResults": maxResults
         }
-        r = requests.get(f"{self.url}/rest/api/2/search", params=params, auth=self.auth)
-        return r.status_code, r.content
+
+        all_issues = list()
+        error_message = None
+        while startAtIdx < total:
+            print(f"At index {startAtIdx}/{total}...", file=sys.stderr)
+            params['startAt'] = startAtIdx
+            r = requests.get(uri, params=params, auth=self.auth)
+            rc = r.status_code
+            if rc == 200:
+                payload = json.loads(r.content)
+                issues = payload['issues']
+                nb_issues = len(issues)
+                all_issues = all_issues + issues
+                total = payload['total']
+                print(f"Got {nb_issues} issues...", file=sys.stderr)
+                if startAtIdx < total:
+                    startAtIdx = startAtIdx + nb_issues
+            else:
+                error_message = r.content
+                break
+        if rc != 200:
+            # print(f"{rc}:{error_message}", sys.stderr)
+            print(f"{rc}:{error_message}", file=sys.stderr)
+            # pass
+            return rc, error_message
+        # pass
+        return rc, json.dumps(all_issues, indent=True)
 
     def getIssuesPage(self, jql, page, pageSize, expand=None):
         params = {
@@ -196,13 +224,13 @@ class JiraClient:
         }
         if expand is not None:
             params['expand'] = expand
-        r = requests.get(f"{self.url}/rest/api/2/search", params=params, auth=self.auth)
+        r = requests.get(f"{self.url}/rest/api/3/search", params=params, auth=self.auth)
         return r.status_code, r.content
 
     def updateIssue(self, issue_key, field_key, value):
         payload = { "fields": {} }
         payload['fields'][field_key] = value
-        r = requests.put(f"{self.url}/rest/api/2/issue/{issue_key}", json=payload, auth=self.auth)
+        r = requests.put(f"{self.url}/rest/api/3/issue/{issue_key}", json=payload, auth=self.auth)
         return r.status_code, r.content
 
     def getCreateMeta(self, project_key, issuetype_key):
@@ -217,7 +245,7 @@ class JiraClient:
             params['issuetypeIds'] = issuetype_key
         elif isinstance(issuetype_key, str):
             params['issuetypeNames'] = issuetype_key
-        r = requests.get(f"{self.url}/rest/api/2/issue/createmeta", params=params, auth=self.auth)
+        r = requests.get(f"{self.url}/rest/api/3/issue/createmeta", params=params, auth=self.auth)
         return r.status_code, r.content
 
     def getFieldIdFromKeyAndMeta(self, field_key, issue_meta):
@@ -256,15 +284,15 @@ class JiraClient:
                 "issueTypeHierarchy"
             ]
         }
-        r = requests.get(f"{self.url}/rest/api/2/project/{project_key_or_id}", params=params, auth=self.auth)
+        r = requests.get(f"{self.url}/rest/api/3/project/{project_key_or_id}", params=params, auth=self.auth)
         return r.status_code, r.content
 
     def listProjects(self):
-        r = requests.get(f"{self.url}/rest/api/2/project", auth=self.auth)
+        r = requests.get(f"{self.url}/rest/api/3/project", auth=self.auth)
         return r.status_code, r.content
 
     def getRole(self, project_id, role_id):
-        r = requests.get(f"{self.url}/rest/api/2/project/{project_id}/role/{role_id}", auth=self.auth)
+        r = requests.get(f"{self.url}/rest/api/3/project/{project_id}/role/{role_id}", auth=self.auth)
         return r.status_code, r.content
 
     def getServiceDesk(self, servicedesk_id):
@@ -276,11 +304,11 @@ class JiraClient:
         return r.status_code, r.content
 
     def createIssue(self, issue):
-        r = requests.post(f"{self.url}/rest/api/2/issue", auth=self.auth, json=issue)
+        r = requests.post(f"{self.url}/rest/api/3/issue", auth=self.auth, json=issue)
         return r.status_code, r.content
 
     def createIssues(self, issues):
-        r = requests.post(f"{self.url}/rest/api/2/issue/bulk", auth=self.auth, json=issues)
+        r = requests.post(f"{self.url}/rest/api/3/issue/bulk", auth=self.auth, json=issues)
         return r.status_code, r.content
 
     def deletePage(self, page_id):

@@ -10,7 +10,7 @@ class Issues(Base):
     """Manage issues"""
 
     def run(self):
-        #print('You supplied the following options:', json.dumps(self.options, indent=2, sort_keys=True))
+        # print('You supplied the following options:', json.dumps(self.options, indent=2, sort_keys=True))
         self.jira_client = JiraClient(self.loadConfiguration())
         if self.hasOption('get'):
             self.getIssues()
@@ -23,16 +23,23 @@ class Issues(Base):
 
     def getIssues(self):
         jql = self.options['<jql>']
+        by_page = False
         if self.hasOption('--page'):
             page_index = int(self.options['--page'])
-        else:
-            page_index = 0
+            by_page = True
         if self.hasOption('--page-size'):
             page_size = int(self.options['--page-size'])
         else:
-            page_size = 50
-        #print("Get page %s/%s of issues for jql %s" % (page_index, page_size, jql))
-        rc, datas = self.jira_client.getIssuesPage(jql, page_index, page_size)
+            page_size = 100
+        if self.hasOption('--fields'):
+            fields = self.options['--fields']
+        else:
+            fields = [ "*all" ]
+        if by_page:
+            #print("Get page %s/%s of issues for jql %s" % (page_index, page_size, jql))
+            rc, datas = self.jira_client.getIssuesPage(jql, page_index, page_size, fields)
+        else:
+            rc, datas = self.jira_client.getIssues(jql, page_size, fields)
         self.processResults(rc, datas)
 
     def getIssuesKeys(self):

@@ -27,7 +27,11 @@ class Issue(Base):
 
     def getIssue(self):
         issue_key = self.options['<issue_key>']
-        rc, datas = self.jira_client.getIssue(issue_key)
+        if self.hasOption('--fields'):
+            fields = self.options['--fields']
+        else:
+            fields = [ "*all" ]
+        rc, datas = self.jira_client.getIssue(issue_key, fields)
         self.processResults(rc, datas)
 
     def deleteIssue(self):
