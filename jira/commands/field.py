@@ -22,6 +22,10 @@ class Field(Base):
             self.loadOptions()
         elif self.hasOption('get'):
             self.getField()
+        elif self.hasOption('getbyid'):
+            self.getFieldById()
+        elif self.hasOption('getbyname'):
+            self.getFieldByName()
         elif self.hasOption('addoptions'):
             self.addOptions()
         elif self.hasOption('suggestions'):
@@ -44,6 +48,22 @@ class Field(Base):
             if field['id'] == field_key_or_id_or_name or field['key'] == field_key_or_id_or_name or field['name'] == field_key_or_id_or_name:
                 results.append(field)
         print(json.dumps(results))
+
+    def getFieldById(self):
+        field_id = self.options['<custom_field_id>']
+        rc, datas = self.jira_client.getCustomFieldById(field_id)
+        if rc == 200:
+            self.processResults(rc, json.dumps(json.loads(datas)['values'][0]))
+        else:
+            self.processResults(rc, datas)
+
+    def getFieldByName(self):
+        field_name = self.options['<field_name>']
+        rc, datas = self.jira_client.getFieldsByName(field_name)
+        if rc == 200:
+            self.processResults(rc, json.dumps(json.loads(datas)['values']))
+        else:
+            self.processResults(rc, datas)
 
     def createField(self):
         name = self.options['<name>']
@@ -81,7 +101,7 @@ class Field(Base):
         field_key = self.options['<field_key>']
         project_id = self.options['<project_id>']
         rc, datas = self.jira_client.getFieldOptions(field_key)
-        print("Will add project " + project_id + " to options of " + field_key)
+        # print("Will add project " + project_id + " to options of " + field_key)
         options = json.loads(datas)['values']
         for option in options:
             if project_id not in option['config']['scope']['projects']:

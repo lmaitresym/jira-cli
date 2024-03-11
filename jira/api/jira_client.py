@@ -8,11 +8,18 @@ class JiraClient:
     def __init__(self, configuration):
         self.configuration = configuration
         self.url = None
-        if configuration is not None and 'url' in configuration:
-            self.url = configuration['url']
+        self.auth = None
+        self.headless = False
+        if configuration is not None:
+            if 'url' in configuration:
+                self.url = configuration['url']
+            if 'username' in configuration and 'password' in configuration:
+                self.auth = HTTPBasicAuth(configuration['username'], configuration['password'])
+            if 'headless' in configuration:
+                self.headless = configuration['headless']
+            if 'debug' in configuration:
+                self.enableLogging()
         self.session = None
-        self.auth = HTTPBasicAuth(self.configuration['username'], self.configuration['password'])
-        # self.enableLogging()
 
     def enableLogging(self):
         import logging
@@ -47,6 +54,40 @@ class JiraClient:
 
     def dump(self):
         return self.configuration
+
+    def getCustomFieldById(self, id):
+        params = {
+            "id": id,
+            "startAt": 0,
+            "maxResults": 1,
+            "expand": [
+                "key",
+                "lastUsed",
+                "screensCount",
+                "contextsCount",
+                "isLocked",
+                "searcherKey"
+            ]
+        }
+        r = requests.get(f"{self.url}/rest/api/3/field/search", params=params, auth=self.auth)
+        return r.status_code, r.content
+
+    def getFieldsByName(self, name):
+        params = {
+            "query": name,
+            "startAt": 0,
+            "maxResults": 100,
+            "expand": [
+                "key",
+                "lastUsed",
+                "screensCount",
+                "contextsCount",
+                "isLocked",
+                "searcherKey"
+            ]
+        }
+        r = requests.get(f"{self.url}/rest/api/3/field/search", params=params, auth=self.auth)
+        return r.status_code, r.content
 
     def getFields(self):
         r = requests.get(f"{self.url}/rest/api/3/field", auth=self.auth)

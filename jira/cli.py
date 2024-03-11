@@ -3,7 +3,7 @@ jira
 
 Usage:
   jira session (login <url> <username> <password>|dump)
-  jira field (get <field_key_or_id_or_name>|getoptions <field_key> <context>|addprojectoptions <field_key> <project_id>|delprojectoptions <field_key> <project_id>|loadoptions <field_key> <options_file> <project_ids>|addoptions <field_key> <options_file> <project_keys>|suggestions <field_key>|referenceDatas <field_key>|getcontexts <field_key>|create <name> <description> <searcher_key> <field_type>)
+  jira field (get <field_key_or_id_or_name>|getoptions <field_key> <context>|addprojectoptions <field_key> <project_id>|delprojectoptions <field_key> <project_id>|loadoptions <field_key> <options_file> <project_ids>|addoptions <field_key> <options_file> <project_keys>|suggestions <field_key>|referenceDatas <field_key>|getcontexts <field_key>|create <name> <description> <searcher_key> <field_type>|getbyid <custom_field_id>|getbyname <field_name>)
   jira option (get <field_key> <option_id>|add <field_key> <option_value> <project_keys>|del <field_key> <option_id>|exist <field_key> <option_value>|replace <field_key> <option_to_replace> <option_to_use> <jql_filter>|getid <field_key> <option_value>|addcascading <field_key> <context_id> <parent_id> <option_value>|delcascading <field_key> <context_id> <parent_id> <option_id>)
   jira options add <field_key> <options_file> <project_keys>
   jira issues (get <jql> [--page=<page_index>] [--page-size=<page_size>] [--fields=<field1,field2...>]|getkeys <jql>|create <json_file>)
