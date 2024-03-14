@@ -19,6 +19,7 @@ class JiraClient:
                 self.headless = configuration['headless']
             if 'debug' in configuration:
                 self.enableLogging()
+        self.headers = { "Accept": "application/json" }
         self.session = None
 
     def enableLogging(self):
@@ -87,6 +88,19 @@ class JiraClient:
             ]
         }
         r = requests.get(f"{self.url}/rest/api/3/field/search", params=params, auth=self.auth)
+        return r.status_code, r.content
+
+    def deleteField(self, field_id):
+        # Works only if the field is in the trash
+        r = requests.delete(f"{self.url}/rest/api/3/field/{field_id}", auth=self.auth)
+        return r.status_code, r.content
+
+    def trashField(self, field_id):
+        r = requests.post(f"{self.url}/rest/api/3/field/{field_id}/trash", auth=self.auth)
+        return r.status_code, r.content
+
+    def restoreField(self, field_id):
+        r = requests.post(f"{self.url}/rest/api/3/field/{field_id}/restore", auth=self.auth)
         return r.status_code, r.content
 
     def getFields(self):
@@ -353,30 +367,27 @@ class JiraClient:
         return r.status_code, r.content
 
     def deletePage(self, page_id):
-        headers = { "Accept": "application/json" }
-        r = requests.delete(f"{self.url}/wiki/rest/api/content/{page_id}", headers=headers, auth=self.auth)
+        r = requests.delete(f"{self.url}/wiki/rest/api/content/{page_id}", headers=self.headers, auth=self.auth)
         return r.status_code, r.content
 
     def getPage(self, space_key, page_title):
-        headers = { "Accept": "application/json" }
         params = {
             "type": "page",
             "expand": "body.editor",
             "spaceKey": space_key,
             "title": page_title
         }
-        r = requests.get(f"{self.url}/wiki/rest/api/content", headers=headers, params=params, auth=self.auth)
+        r = requests.get(f"{self.url}/wiki/rest/api/content", headers=self.headers, params=params, auth=self.auth)
         return r.status_code, r.content
 
     def getPageVersion(self, space_key, page_title):
-        headers = { "Accept": "application/json" }
         params = {
             "type": "page",
             "expand": "version",
             "spaceKey": space_key,
             "title": page_title
         }
-        r = requests.get(f"{self.url}/wiki/rest/api/content", headers=headers, params=params, auth=self.auth)
+        r = requests.get(f"{self.url}/wiki/rest/api/content", headers=self.headers, params=params, auth=self.auth)
         page = json.loads(r.content)['results'][0]
         return page
 
@@ -500,7 +511,46 @@ class JiraClient:
         return allChildren
 
     def getSpace(self, space_id):
-        headers = { "Accept": "application/json" }
         params = { 'spaceKey': space_id }
-        r = requests.get(f"{self.url}/wiki/rest/api/space", headers=headers, params=params, auth=self.auth)
+        r = requests.get(f"{self.url}/wiki/rest/api/space", headers=self.headers, params=params, auth=self.auth)
+        return r.status_code, r.content
+
+    def getTask(self, task_id):
+        r = requests.get(f"{self.url}/rest/api/3/task/{task_id}", headers=self.headers, auth=self.auth)
+        return r.status_code, r.content
+
+    def cancelTask(self, task_id):
+        r = requests.get(f"{self.url}/rest/api/3/task/{task_id}/cancel", headers=self.headers, auth=self.auth)
+        return r.status_code, r.content
+
+    def getServerInfos(self):
+        r = requests.get(f"{self.url}/rest/api/3/serverInfo", auth=self.auth)
+        return r.status_code, r.content
+
+    def getSetting(self, setting_key):
+        params = {
+            "key": setting_key
+        }
+        r = requests.get(f"{self.url}/rest/api/3/application-properties", params=params, auth=self.auth)
+        return r.status_code, r.content
+
+    def setSetting(self, setting_key, setting_value):
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+        payload = json.dumps({
+            "id": setting_key,
+            "value": setting_value
+        })
+        r = requests.put(f"{self.url}/rest/api/3/application-properties/{setting_key}", data=payload, headers=headers, auth=self.auth)
+        return r.status_code, r.content
+
+    def listSettings(self, category):
+        if category == 'global':
+            r = requests.get(f"{self.url}/rest/api/3/configuration", auth=self.auth)
+        elif category == 'advanced':
+            r = requests.get(f"{self.url}/rest/api/3/application-properties/advanced-settings", auth=self.auth)
+        else:
+            r = requests.get(f"{self.url}/rest/api/3/application-properties", auth=self.auth)
         return r.status_code, r.content

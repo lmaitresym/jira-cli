@@ -26,6 +26,12 @@ class Field(Base):
             self.getFieldById()
         elif self.hasOption('getbyname'):
             self.getFieldByName()
+        elif self.hasOption('delete'):
+            self.deleteField()
+        elif self.hasOption('trash'):
+            self.trashField()
+        elif self.hasOption('restore'):
+            self.restoreField()
         elif self.hasOption('addoptions'):
             self.addOptions()
         elif self.hasOption('suggestions'):
@@ -49,11 +55,30 @@ class Field(Base):
                 results.append(field)
         print(json.dumps(results))
 
+    def deleteField(self):
+        field_id = self.options['<field_id>']
+        rc, datas = self.jira_client.deleteField(field_id)
+        self.processResults(rc, datas)
+
+    def trashField(self):
+        field_id = self.options['<field_id>']
+        rc, datas = self.jira_client.trashField(field_id)
+        self.processResults(rc, datas)
+
+    def restoreField(self):
+        field_id = self.options['<field_id>']
+        rc, datas = self.jira_client.restoreField(field_id)
+        self.processResults(rc, datas)
+
     def getFieldById(self):
         field_id = self.options['<custom_field_id>']
         rc, datas = self.jira_client.getCustomFieldById(field_id)
         if rc == 200:
-            self.processResults(rc, json.dumps(json.loads(datas)['values'][0]))
+            values = json.loads(datas)['values']
+            if len(values) > 0:
+                self.processResults(rc, json.dumps(json.loads(datas)['values'][0]))
+            else:
+                self.processResults(rc, "")
         else:
             self.processResults(rc, datas)
 
