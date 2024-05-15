@@ -22,6 +22,8 @@ class Field(Base):
             self.loadOptions()
         elif self.hasOption('get'):
             self.getField()
+        elif self.hasOption('getall'):
+            self.getFields()
         elif self.hasOption('getbyid'):
             self.getFieldById()
         elif self.hasOption('getbyname'):
@@ -40,6 +42,8 @@ class Field(Base):
             self.referenceDatas()
         elif self.hasOption('getcontexts'):
             self.getContexts()
+        elif self.hasOption('delcontext'):
+            self.delContext()
         elif self.hasOption('create'):
             self.createField()
         else:
@@ -53,7 +57,11 @@ class Field(Base):
         for field in fields_list:
             if field['id'] == field_key_or_id_or_name or field['key'] == field_key_or_id_or_name or field['name'] == field_key_or_id_or_name:
                 results.append(field)
-        print(json.dumps(results))
+        print(json.dumps(results, indent=2))
+
+    def getFields(self):
+        _, datas = self.jira_client.getFields()
+        print(json.dumps(json.loads(datas), indent=2))
 
     def deleteField(self):
         field_id = self.options['<field_id>']
@@ -195,4 +203,10 @@ class Field(Base):
     def referenceDatas(self):
         field_key = self.options['<field_key>']
         rc, datas = self.jira_client.getReferenceData(field_key)
+        self.processResults(rc, datas)
+
+    def delContext(self):
+        field_id = self.options['<field_id>']
+        context_id = self.options['<context_id>']
+        rc, datas = self.jira_client.delContext(field_id, context_id)
         self.processResults(rc, datas)

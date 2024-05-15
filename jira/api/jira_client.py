@@ -47,7 +47,7 @@ class JiraClient:
 
     # Session API
 
-    def login(self, url, username, password):
+    def login(self, url: str, username: str, password: str):
         self.configuration['url'] = url
         self.configuration['username'] = username
         self.configuration['password'] = password
@@ -56,7 +56,7 @@ class JiraClient:
     def dump(self):
         return self.configuration
 
-    def getCustomFieldById(self, id):
+    def getCustomFieldById(self, id: str):
         params = {
             "id": id,
             "startAt": 0,
@@ -73,7 +73,7 @@ class JiraClient:
         r = requests.get(f"{self.url}/rest/api/3/field/search", params=params, auth=self.auth)
         return r.status_code, r.content
 
-    def getFieldsByName(self, name):
+    def getFieldsByName(self, name: str):
         params = {
             "query": name,
             "startAt": 0,
@@ -90,16 +90,16 @@ class JiraClient:
         r = requests.get(f"{self.url}/rest/api/3/field/search", params=params, auth=self.auth)
         return r.status_code, r.content
 
-    def deleteField(self, field_id):
+    def deleteField(self, field_id: str):
         # Works only if the field is in the trash
         r = requests.delete(f"{self.url}/rest/api/3/field/{field_id}", auth=self.auth)
         return r.status_code, r.content
 
-    def trashField(self, field_id):
+    def trashField(self, field_id: str):
         r = requests.post(f"{self.url}/rest/api/3/field/{field_id}/trash", auth=self.auth)
         return r.status_code, r.content
 
-    def restoreField(self, field_id):
+    def restoreField(self, field_id: str):
         r = requests.post(f"{self.url}/rest/api/3/field/{field_id}/restore", auth=self.auth)
         return r.status_code, r.content
 
@@ -107,29 +107,29 @@ class JiraClient:
         r = requests.get(f"{self.url}/rest/api/3/field", auth=self.auth)
         return r.status_code, r.content
 
-    def getReferenceData(self, field_key):
+    def getReferenceData(self, field_key: str):
         params = {
             'fieldName': field_key
         }
         r = requests.get(f"{self.url}/rest/api/3/jql/autocompletedata", params=params, auth=self.auth)
         return r.status_code, r.content
 
-    def getSuggestions(self, field_key):
+    def getSuggestions(self, field_key: str):
         params = {
             'fieldName': field_key
         }
         r = requests.get(f"{self.url}/rest/api/3/jql/autocompletedata/suggestions", params=params, auth=self.auth)
         return r.status_code, r.content
 
-    def getFieldOption(self, field_key, option_id):
+    def getFieldOption(self, field_key: str, option_id):
         r = requests.get(f"{self.url}/rest/api/3/field/{field_key}/option/{option_id}", auth=self.auth)
         return r.status_code, r.content
 
-    def deleteFieldOption(self, field_key, option_id):
+    def deleteFieldOption(self, field_key: str, option_id):
         r = requests.delete(f"{self.url}/rest/api/3/field/{field_key}/option/{option_id}", auth=self.auth)
         return r.status_code, r.text
 
-    def getFieldOptions(self, field_key, context):
+    def getFieldOptions(self, field_key: str, context):
         if context is None:
             uri = f"{self.url}/rest/api/3/customFieldOption/{field_key}"
         else:
@@ -161,15 +161,15 @@ class JiraClient:
             return rc, error_message
         return rc, json.dumps(all_options)
 
-    def getFieldContexts(self, field_key):
+    def getFieldContexts(self, field_key: str):
         r = requests.get(f"{self.url}/rest/api/3/field/{field_key}/context", auth=self.auth)
         return r.status_code, r.content
 
-    def addOption(self, field_key, option):
+    def addOption(self, field_key: str, option: str):
         r = requests.post(f"{self.url}/rest/api/3/field/{field_key}/option", auth=self.auth, json=option)
         return r.status_code, r.content
 
-    def addCascadingOption(self, field_key, contextId, parentOptionId, optionValue):
+    def addCascadingOption(self, field_key: str, contextId, parentOptionId, optionValue):
         json = {
             'options': [
                 {
@@ -182,19 +182,19 @@ class JiraClient:
         r = requests.post(f"{self.url}/rest/api/3/field/{field_key}/context/{contextId}/option", auth=self.auth, json=json)
         return r.status_code, r.content
 
-    def delCascadingOption(self, field_key, contextId, parentOptionId, optionId):
+    def delCascadingOption(self, field_key: str, contextId, parentOptionId, optionId):
         r = requests.delete(f"{self.url}/rest/api/3/field/{field_key}/context/{contextId}/option/{optionId}", auth=self.auth)
         return r.status_code, r.content
 
-    def addOptionWithId(self, field_key, option, option_id):
+    def addOptionWithId(self, field_key: str, option, option_id):
         r = requests.put(f"{self.url}/rest/api/3/field/{field_key}/option/{option_id}", auth=self.auth, json=option)
         return r.status_code, r.content
 
-    def updateFieldOption(self, field_key, option):
+    def updateFieldOption(self, field_key: str, option):
         r = requests.put(f"{self.url}/rest/api/3/field/{field_key}/option/{option['id']}", auth=self.auth, json=option)
         return r.status_code, r.content
 
-    def replaceOption(self, field_key, option_to_replace, option_to_use, jql_filter):
+    def replaceOption(self, field_key: str, option_to_replace, option_to_use, jql_filter):
         params = {
             "replaceWith": option_to_use,
             "jql": jql_filter
@@ -206,7 +206,12 @@ class JiraClient:
             print('Get task status here: %s' % r.content)
         return r.status_code, r.content
 
-    def createCustomField(self, name, description, searcherKey, fieldType):
+    def createCustomField(self,
+                          name: str,
+                          description: str,
+                          searcherKey: str,
+                          fieldType: str
+                          ):
         json = {
             "description": description,
             "name": name,
@@ -220,6 +225,33 @@ class JiraClient:
         r = requests.post(f"{self.url}/rest/api/3/field", headers=headers, json=json, auth=self.auth)
         return r.status_code, r.content
 
+    def createCustomFieldContext(self,
+                                 fieldId: str,
+                                 description: str,
+                                 issueTypeIds: list[str],
+                                 name: str,
+                                 projectIds: list[str]
+                                ):
+        json = {
+            "description": description,
+            "issueTypeIds": issueTypeIds,
+            "name": name,
+            "projectIds": projectIds
+        }
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+        r = requests.post(f"{self.url}/rest/api/3/field/{fieldId}/context", headers=headers, json=json, auth=self.auth)
+        return r.status_code, r.content
+
+    def deleteCustomFieldContext(self,
+                                 fieldId: str,
+                                 contextId: str
+                                ):
+        r = requests.delete(f"{self.url}/rest/api/3/field/{fieldId}/context/{contextId}", headers=self.headers, auth=self.auth)
+        return r.status_code, r.content
+
     def getIssue(self, issue_key, fields):
         params = {
             "fields": fields
@@ -227,11 +259,11 @@ class JiraClient:
         r = requests.get(f"{self.url}/rest/api/3/issue/{issue_key}", params=params, auth=self.auth)
         return r.status_code, r.content
 
-    def deleteIssue(self, issue_key):
+    def deleteIssue(self, issue_key: str):
         r = requests.delete(f"{self.url}/rest/api/3/issue/{issue_key}", auth=self.auth)
         return r.status_code, r.content
 
-    def getIssues(self, jql, page_size, fields):
+    def getIssues(self, jql: str, page_size, fields: str):
         uri = f"{self.url}/rest/api/3/search"
         total = 999999
         startAtIdx = 0
@@ -270,7 +302,7 @@ class JiraClient:
         # pass
         return rc, json.dumps(all_issues, indent=True)
 
-    def getIssuesPage(self, jql, page, pageSize, expand=None):
+    def getIssuesPage(self, jql: str, page, pageSize, expand=None):
         params = {
             "jql": jql,
             "fields": "*all",
@@ -282,13 +314,13 @@ class JiraClient:
         r = requests.get(f"{self.url}/rest/api/3/search", params=params, auth=self.auth)
         return r.status_code, r.content
 
-    def updateIssue(self, issue_key, field_key, value):
+    def updateIssue(self, issue_key: str, field_key: str, value):
         payload = { "fields": {} }
         payload['fields'][field_key] = value
         r = requests.put(f"{self.url}/rest/api/3/issue/{issue_key}", json=payload, auth=self.auth)
         return r.status_code, r.content
 
-    def getCreateMeta(self, project_key, issuetype_key):
+    def getCreateMeta(self, project_key: str, issuetype_key: str):
         params = {
             "expand": "projects.issuetypes.fields"
         }
@@ -303,7 +335,7 @@ class JiraClient:
         r = requests.get(f"{self.url}/rest/api/3/issue/createmeta", params=params, auth=self.auth)
         return r.status_code, r.content
 
-    def getFieldIdFromKeyAndMeta(self, field_key, issue_meta):
+    def getFieldIdFromKeyAndMeta(self, field_key: str, issue_meta: str):
         fields = issue_meta['projects'][0]['issuetypes'][0]['fields']
         for f in fields:
             field = fields[f]
@@ -313,7 +345,7 @@ class JiraClient:
         #print("Didn't found key for %s" % field_key)
         return None
 
-    def hasOption(self, field_key, option_value):
+    def hasOption(self, field_key: str, option_value):
         rc, datas = self.getFieldOptions(field_key)
         allOptions = json.loads(datas)['values']
         allValues = []
@@ -321,7 +353,7 @@ class JiraClient:
             allValues.append(option['value'].encode('utf-8'))
         return self.indexOf(option_value, allValues) > -1
 
-    def indexOf(self, item, array):
+    def indexOf(self, item: str, array: list[str]):
         idx = 0
         for i in array:
             if str(i) == str(item):
@@ -329,7 +361,7 @@ class JiraClient:
             idx = idx+1
         return -1
 
-    def getProject(self, project_key_or_id):
+    def getProject(self, project_key_or_id: str):
         params = {
             "expand": [
                 "description",
@@ -346,11 +378,11 @@ class JiraClient:
         r = requests.get(f"{self.url}/rest/api/3/project", auth=self.auth)
         return r.status_code, r.content
 
-    def getRole(self, project_id, role_id):
+    def getRole(self, project_id: str, role_id: str):
         r = requests.get(f"{self.url}/rest/api/3/project/{project_id}/role/{role_id}", auth=self.auth)
         return r.status_code, r.content
 
-    def getServiceDesk(self, servicedesk_id):
+    def getServiceDesk(self, servicedesk_id: str):
         r = requests.get(f"{self.url}/rest/servicedeskapi/servicedesk/{servicedesk_id}", auth=self.auth)
         return r.status_code, r.content
 
@@ -366,11 +398,11 @@ class JiraClient:
         r = requests.post(f"{self.url}/rest/api/3/issue/bulk", auth=self.auth, json=issues)
         return r.status_code, r.content
 
-    def deletePage(self, page_id):
+    def deletePage(self, page_id: str):
         r = requests.delete(f"{self.url}/wiki/rest/api/content/{page_id}", headers=self.headers, auth=self.auth)
         return r.status_code, r.content
 
-    def getPage(self, space_key, page_title):
+    def getPage(self, space_key: str, page_title: str):
         params = {
             "type": "page",
             "expand": "body.editor",
@@ -380,7 +412,7 @@ class JiraClient:
         r = requests.get(f"{self.url}/wiki/rest/api/content", headers=self.headers, params=params, auth=self.auth)
         return r.status_code, r.content
 
-    def getPageVersion(self, space_key, page_title):
+    def getPageVersion(self, space_key: str, page_title: str):
         params = {
             "type": "page",
             "expand": "version",
@@ -391,7 +423,7 @@ class JiraClient:
         page = json.loads(r.content)['results'][0]
         return page
 
-    def createPage(self, page_title, space_key, page_content, parent_id, labels=list()):
+    def createPage(self, page_title: str, space_key: str, page_content, parent_id: str, labels=list()):
         payload = {
             'type': 'page',
             'title': page_title,
@@ -414,7 +446,7 @@ class JiraClient:
         r = requests.post(f"{self.url}/wiki/rest/api/content", auth=self.auth, json=payload)
         return r.status_code, r.content
 
-    def updatePage(self, page_title, space_key, page_content, labels=list()):
+    def updatePage(self, page_title: str, space_key: str, page_content, labels=list()):
         currentPageVersion = self.getPageVersion(space_key, page_title)
         new_version = int(currentPageVersion['version']['number']) + 1
         page_id = currentPageVersion['id']
@@ -440,7 +472,7 @@ class JiraClient:
         r = requests.put(f"{self.url}/wiki/rest/api/content/{page_id}", auth=self.auth, json=payload)
         return r.status_code, r.content
 
-    def movePage(self, page_title, space_key, parent_id):
+    def movePage(self, page_title: str, space_key: str, parent_id: str):
         current_page = self.getPageVersion(space_key, page_title)
         id = current_page['id']
         version = int(current_page['version']['number']) + 1
@@ -458,18 +490,18 @@ class JiraClient:
         r = requests.put(f"{self.url}/wiki/rest/api/content/{page_id}", auth=self.auth, json=payload)
         return r.status_code, r.content
 
-    def getPageLabels(self, page_title, space_key):
+    def getPageLabels(self, page_title: str, space_key: str):
         current_page = self.getPageVersion(space_key, page_title)
         page_id = current_page['id']
         return self.getPageLabelsById(page_id)
 
-    def getPageLabelsById(self, page_id):
+    def getPageLabelsById(self, page_id: str):
         r = requests.get(f"{self.url}/wiki/rest/api/content/{page_id}/label", auth=self.auth)
         if r.status_code != 200:
             return []
         return json.loads(r.content)['results']
 
-    def addPageLabel(self, page_title, space_key, label):
+    def addPageLabel(self, page_title: str, space_key: str, label: str):
         current_page = self.getPageVersion(space_key, page_title)
         id = current_page['id']
         return self.addPageLabelById(id, label)
@@ -485,24 +517,24 @@ class JiraClient:
         r = requests.post(f"{self.url}/wiki/rest/api/content/{page_id}/label", auth=self.auth, json=payload)
         return r.status_code, r.content
 
-    def getPageChildrenById(self, page_id):
+    def getPageChildrenById(self, page_id: str):
         params = { 'expand': 'page' }
         r = requests.get(f"{self.url}/wiki/rest/api/content/{page_id}/child", params=params, auth=self.auth)
         if r.status_code != 200:
             return []
         return json.loads(r.content)['page']['results']
 
-    def getPageChildren(self, page_title, space_key):
+    def getPageChildren(self, page_title: str, space_key: str):
         current_page = self.getPageVersion(space_key, page_title)
         id = current_page['id']
         return self.getPageChildrenById(id)
 
-    def getAllPageChildren(self, page_title, space_key):
+    def getAllPageChildren(self, page_title: str, space_key: str):
         current_page = self.getPageVersion(space_key, page_title)
         id = current_page['id']
         return self.getAllPageChildrenById(id)
 
-    def getAllPageChildrenById(self, page_id):
+    def getAllPageChildrenById(self, page_id: str):
         children = self.getPageChildrenById(page_id)
         allChildren = list(children)
         for child in children:
@@ -510,16 +542,16 @@ class JiraClient:
             allChildren.extend(child_children)
         return allChildren
 
-    def getSpace(self, space_id):
+    def getSpace(self, space_id: str):
         params = { 'spaceKey': space_id }
         r = requests.get(f"{self.url}/wiki/rest/api/space", headers=self.headers, params=params, auth=self.auth)
         return r.status_code, r.content
 
-    def getTask(self, task_id):
+    def getTask(self, task_id: str):
         r = requests.get(f"{self.url}/rest/api/3/task/{task_id}", headers=self.headers, auth=self.auth)
         return r.status_code, r.content
 
-    def cancelTask(self, task_id):
+    def cancelTask(self, task_id: str):
         r = requests.get(f"{self.url}/rest/api/3/task/{task_id}/cancel", headers=self.headers, auth=self.auth)
         return r.status_code, r.content
 
@@ -527,14 +559,14 @@ class JiraClient:
         r = requests.get(f"{self.url}/rest/api/3/serverInfo", auth=self.auth)
         return r.status_code, r.content
 
-    def getSetting(self, setting_key):
+    def getSetting(self, setting_key: str):
         params = {
             "key": setting_key
         }
         r = requests.get(f"{self.url}/rest/api/3/application-properties", params=params, auth=self.auth)
         return r.status_code, r.content
 
-    def setSetting(self, setting_key, setting_value):
+    def setSetting(self, setting_key: str, setting_value: str):
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/json"
@@ -546,11 +578,26 @@ class JiraClient:
         r = requests.put(f"{self.url}/rest/api/3/application-properties/{setting_key}", data=payload, headers=headers, auth=self.auth)
         return r.status_code, r.content
 
-    def listSettings(self, category):
+    def listSettings(self, category: str):
         if category == 'global':
             r = requests.get(f"{self.url}/rest/api/3/configuration", auth=self.auth)
         elif category == 'advanced':
             r = requests.get(f"{self.url}/rest/api/3/application-properties/advanced-settings", auth=self.auth)
         else:
             r = requests.get(f"{self.url}/rest/api/3/application-properties", auth=self.auth)
+        return r.status_code, r.content
+
+    def getIssueType(self, issuetype_key: str):
+        r = requests.get(f"{self.url}/rest/api/3/issuetype/{issuetype_key}", auth=self.auth)
+        return r.status_code, r.content
+
+    def getIssueTypes(self):
+        r = requests.get(f"{self.url}/rest/api/3/issuetype", auth=self.auth)
+        return r.status_code, r.content
+
+    def getIssueTypesByProject(self, project_id: str):
+        params = {
+            'projectId': project_id
+        }
+        r = requests.get(f"{self.url}/rest/api/3/issuetype/project", auth=self.auth, params=params)
         return r.status_code, r.content

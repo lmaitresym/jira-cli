@@ -3,11 +3,12 @@ jira
 
 Usage:
   jira session (login <url> <username> <password>|dump)
-  jira field (get <field_key_or_id_or_name>|getoptions <field_key> <context>|addprojectoptions <field_key> <project_id>|delprojectoptions <field_key> <project_id>|loadoptions <field_key> <options_file> <project_ids>|addoptions <field_key> <options_file> <project_keys>|suggestions <field_key>|referenceDatas <field_key>|getcontexts <field_key>|create <name> <description> <searcher_key> <field_type>|getbyid <custom_field_id>|getbyname <field_name>|trash <field_id>|restore <field_id>|delete <field_id>)
+  jira field (getall|get <field_key_or_id_or_name>|getoptions <field_key> <context>|addprojectoptions <field_key> <project_id>|delprojectoptions <field_key> <project_id>|loadoptions <field_key> <options_file> <project_ids>|addoptions <field_key> <options_file> <project_keys>|suggestions <field_key>|referenceDatas <field_key>|getcontexts <field_key>|create <name> <description> <searcher_key> <field_type>|getbyid <custom_field_id>|getbyname <field_name>|trash <field_id>|restore <field_id>|delete <field_id>|delcontext <field_id> <context_id>)
   jira option (get <field_key> <option_id>|add <field_key> <option_value> <project_keys>|del <field_key> <option_id>|exist <field_key> <option_value>|replace <field_key> <option_to_replace> <option_to_use> <jql_filter>|getid <field_key> <option_value>|addcascading <field_key> <context_id> <parent_id> <option_value>|delcascading <field_key> <context_id> <parent_id> <option_id>)
   jira options add <field_key> <options_file> <project_keys>
   jira issues (get <jql> [--page=<page_index>] [--page-size=<page_size>] [--fields=<field1,field2...>]|getkeys <jql>|create <json_file>)
   jira issue (get <issue_key> [--fields=<field1,field2...>]|del <issue_key>|set <issue_keys> <field_key> <value_or_field_key>|createmeta <project_key> <issue_type>|create <json_file>)
+  jira issuetype (get <issuetype_key>|getall|getbyproject <project_id>)
   jira project (get <project_key_or_id>|list)
   jira role (get <project_id> <role_id>)
   jira servicedesk (get <servicedesk_id>|list)

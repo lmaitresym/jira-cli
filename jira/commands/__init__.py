@@ -1,6 +1,7 @@
 from .field import *
 from .issue import *
 from .issues import *
+from .issuetype import *
 from .option import *
 from .page import *
 from .project import *
