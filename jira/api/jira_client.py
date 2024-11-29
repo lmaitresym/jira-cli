@@ -5,12 +5,12 @@ import sys
 
 class JiraClient:
 
-    def __init__(self, configuration):
+    def __init__(self, configuration: dict[str,str]):
         self.configuration = configuration
         self.url = None
         self.auth = None
         self.headless = False
-        if configuration is not None:
+        if configuration:
             if 'url' in configuration:
                 self.url = configuration['url']
             if 'username' in configuration and 'password' in configuration:
