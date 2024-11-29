@@ -36,6 +36,12 @@ class Field(Base):
             self.restoreField()
         elif self.hasOption('addoptions'):
             self.addOptions()
+        elif self.hasOption('addoption'):
+            self.addOption()
+        elif self.hasOption('deloption'):
+            self.delOption()
+        elif self.hasOption('delalloptions'):
+            self.delAllOptions()
         elif self.hasOption('suggestions'):
             self.suggestions()
         elif self.hasOption('referenceDatas'):
@@ -194,6 +200,23 @@ class Field(Base):
                 results.append(datas)
             index += 1
         print(json.dumps(results))
+
+    def addOption(self):
+        field_key = self.options['<field_key>']
+        option_value = self.options['<option_value>']
+        context_id = self.options['<context_id>']
+        rc, result = self.jira_client.addOptionWithContext(field_key, context_id, option_value)
+
+    def delOption(self):
+        field_key = self.options['<field_key>']
+        option_id = self.options['<option_id>']
+        context_id = self.options['<context_id>']
+        rc, result = self.jira_client.delOptionWithContext(field_key, context_id, option_id)
+
+    def delAllOptions(self):
+        field_key = self.options['<field_key>']
+        context_id = self.options['<context_id>']
+        rc, result = self.jira_client.delAllOptionsWithContext(field_key, context_id)
 
     def suggestions(self):
         field_key = self.options['<field_key>']

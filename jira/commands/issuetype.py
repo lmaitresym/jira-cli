@@ -18,6 +18,10 @@ class Issue(Base):
             self.getIssueTypesByProject()
         elif self.hasOption('getall'):
             self.getIssueTypes()
+        elif self.hasOption('delete'):
+            self.deleteIssueType()
+        elif self.hasOption('create'):
+            self.createIssueType()
         else:
             print("Nothing to do.")
 
@@ -33,4 +37,16 @@ class Issue(Base):
     def getIssueTypesByProject(self):
         project_id = self.options['<project_id>']
         rc, datas = self.jira_client.getIssueTypesByProject(project_id)
+        self.processResults(rc, datas)
+
+    def deleteIssueType(self):
+        issuetype_id = self.options['<issuetype_id>']
+        rc, datas = self.jira_client.deleteIssueType(issuetype_id)
+        self.processResults(rc, datas)
+
+    def createIssueType(self):
+        issuetype_name = self.options['<issuetype_name>']
+        issuetype_description = self.options['<issuetype_description>']
+        issuetype_hierarchy_level = self.options['<issuetype_hierarchy_level>']
+        rc, datas = self.jira_client.createIssueType(issuetype_name, issuetype_description, issuetype_hierarchy_level)
         self.processResults(rc, datas)

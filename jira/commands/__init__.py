@@ -6,6 +6,7 @@ from .option import *
 from .page import *
 from .project import *
 from .role import *
+from .screen import *
 from .server import *
 from .servicedesk import *
 from .session import *

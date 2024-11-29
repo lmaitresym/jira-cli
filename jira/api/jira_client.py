@@ -165,6 +165,34 @@ class JiraClient:
         r = requests.get(f"{self.url}/rest/api/3/field/{field_key}/context", auth=self.auth)
         return r.status_code, r.content
 
+    def addOptionWithContext(self, field_key: str, context_id: str, option_value: str):
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+        payload = json.dumps({
+            "options": [
+                {
+                    'disabled': False,
+                    'value': option_value
+                }
+            ]
+        })
+        r = requests.post(f"{self.url}/rest/api/3/field/{field_key}/context/{context_id}/option", auth=self.auth, headers=headers, data=payload)
+        return r.status_code, r.content
+
+    def delOptionWithContext(self, field_key: str, context_id: str, option_id: str):
+        r = requests.delete(f"{self.url}/rest/api/3/field/{field_key}/context/{context_id}/option/{option_id}", auth=self.auth)
+        return r.status_code, r.content
+
+    def delAllOptionsWithContext(self, field_key, context_id):
+        _, options = self.getFieldOptions(field_key, context_id)
+        for o in json.loads(options):
+            # print(o)
+            # option = options[o]
+            rc, ret = self.delOptionWithContext(field_key, context_id, o['id'])
+        return 200, ""
+
     def addOption(self, field_key: str, option: str):
         r = requests.post(f"{self.url}/rest/api/3/field/{field_key}/option", auth=self.auth, json=option)
         return r.status_code, r.content
@@ -263,7 +291,7 @@ class JiraClient:
         r = requests.delete(f"{self.url}/rest/api/3/issue/{issue_key}", auth=self.auth)
         return r.status_code, r.content
 
-    def getIssues(self, jql: str, page_size, fields: str):
+    def getIssues(self, jql: str, page_size: int, fields: str):
         uri = f"{self.url}/rest/api/3/search"
         total = 999999
         startAtIdx = 0
@@ -278,7 +306,7 @@ class JiraClient:
         all_issues = list()
         error_message = None
         while startAtIdx < total:
-            print(f"At index {startAtIdx}/{total}...", file=sys.stderr)
+            #print(f"At index {startAtIdx}/{total}...", file=sys.stderr)
             params['startAt'] = startAtIdx
             r = requests.get(uri, params=params, auth=self.auth)
             rc = r.status_code
@@ -288,7 +316,7 @@ class JiraClient:
                 nb_issues = len(issues)
                 all_issues = all_issues + issues
                 total = payload['total']
-                print(f"Got {nb_issues} issues...", file=sys.stderr)
+                #print(f"Got {nb_issues} issues...", file=sys.stderr)
                 if startAtIdx < total:
                     startAtIdx = startAtIdx + nb_issues
             else:
@@ -600,4 +628,31 @@ class JiraClient:
             'projectId': project_id
         }
         r = requests.get(f"{self.url}/rest/api/3/issuetype/project", auth=self.auth, params=params)
+        return r.status_code, r.content
+
+    def getScreen(self, screen_id: str):
+        params = {
+            'id': [ 
+                int(screen_id)
+            ]
+        }
+        r = requests.get(f"{self.url}/rest/api/3/screens", auth=self.auth, params=params)
+        return r.status_code, r.content
+
+    def getScreenTabs(self, screen_id: str, project_id: str):
+        params = {
+            'projectKey': project_id
+        }
+        r = requests.get(f"{self.url}/rest/api/2/screens/{screen_id}/tabs", auth=self.auth, params=params)
+        return r.status_code, r.content
+
+    def addFieldToTab(self, screen_id: str, tab_id: str, field_id: str):
+        payload = {
+            'fieldId': field_id
+        }
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+        r = requests.post(f"{self.url}/rest/api/2/screens/{screen_id}/tabs/{tab_id}/fields", headers=headers, auth=self.auth, data=json.dumps(payload))
         return r.status_code, r.content
