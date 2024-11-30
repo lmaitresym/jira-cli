@@ -12,7 +12,7 @@ def get(servicedesk_id: str = typer.Argument(help="The service desk id")):
     return result
 
 @app.command(help="List service desks")
-def listServiceDesks():
+def list():
     result = ServiceDeskClient().listServiceDesks()
     print(json.dumps(result, indent=2))
     return result
