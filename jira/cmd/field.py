@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
 import typer
 from typing import Any
-from jira.api.jira_client import indexOf
 from jira.api.field_client import FieldClient
 import json
 
 app = typer.Typer(help="Manage fields")
 
 @app.command(help="Get a Field")
-def get(
-    field: str = typer.Argument(help="The field key or id")
-    ):
+def get(field: str = typer.Argument(help="The field key or id")):
     fields_list = FieldClient().getFields()
     results: list[dict[str, Any]] = list()
     for f in fields_list:
@@ -32,9 +29,7 @@ def delete_field(field_id: str = typer.Argument(help="The field id")):
     return result
 
 @app.command(help="Put a field to the trash")
-def trash_field(
-    field_id: str = typer.Argument(help="The field id")
-    ):
+def trash_field(field_id: str = typer.Argument(help="The field id")):
     result = FieldClient().trashField(field_id)
     print(json.dumps(result, indent=2))
     return result
@@ -58,24 +53,29 @@ def get_field_by_name(field_name: str = typer.Argument(help="The field name")):
     return result
 
 @app.command(help="Create a field")
-def create_field(field_name: str = typer.Argument(help="The field name"),
-                description: str = typer.Argument(help="The description"),
-                searcherKey: str = typer.Argument(help="The searcher key"),
-                fieldType: str = typer.Argument(help="The field type")
+def create_field(
+    field_name: str = typer.Argument(help="The field name"),
+    description: str = typer.Argument(help="The description"),
+    searcherKey: str = typer.Argument(help="The searcher key"),
+    fieldType: str = typer.Argument(help="The field type")
     ):
     result = FieldClient().createCustomField( field_name, description, searcherKey, fieldType)
     print(json.dumps(result, indent=2))
     return result
 
 @app.command(help="Get contexts of a field")
-def get_contexts(field_key: str = typer.Argument(help="The field key")):
+def get_contexts(
+        field_key: str = typer.Argument(help="The field key")
+    ):
     result = FieldClient().getFieldContexts(field_key)
     print(json.dumps(result, indent=2))
     return result
 
 @app.command(help="Delete a context of a field")
-def delete_context(field_id: str = typer.Argument(help="The field id"),
-               context_id: str = typer.Argument(help="The context id")):
+def delete_context(
+    field_id: str = typer.Argument(help="The field id"),
+    context_id: str = typer.Argument(help="The context id")
+    ):
     result = FieldClient().deleteCustomFieldContext(field_id, context_id)
     print(json.dumps(result, indent=2))
     return result
@@ -91,4 +91,3 @@ def reference_datas(field_key: str = typer.Argument(help="The field key")):
     result = FieldClient().getReferenceData(field_key)
     print(json.dumps(result, indent=2))
     return result
-

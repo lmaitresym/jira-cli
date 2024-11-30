@@ -5,6 +5,9 @@ from jira.cmd import issuetype
 from jira.cmd import option
 from jira.cmd import page
 from jira.cmd import project
+from jira.cmd import role
+from jira.cmd import screen
+from jira.cmd import task
 from jira.api.jira_client import jira_config
 
 def init_config(
@@ -22,6 +25,9 @@ app.add_typer(issuetype.app, name="issuetype")
 app.add_typer(option.app, name="option")
 app.add_typer(page.app, name="page")
 app.add_typer(project.app, name="project")
+app.add_typer(role.app, name="role")
+app.add_typer(screen.app, name="screen")
+app.add_typer(task.app, name="task")
 
 if __name__ == '__main__':
     app()
