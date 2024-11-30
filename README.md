@@ -6,6 +6,8 @@
 
 This is a command line client which allows to interact with the JIRA platform.
 
+Note: Use tag 1.1.0, tag 2.0.0 is under tests and brings a lot of untested and breaking changes.
+
 ## Installation
 
 Preferrably in a virtualenv, install the current version::
