@@ -10,6 +10,7 @@ from jira.cmd import screen
 from jira.cmd import server
 from jira.cmd import servicedesk
 from jira.cmd import setting
+from jira.cmd import space
 from jira.cmd import task
 
 from jira.api.jira_client import jira_config
@@ -32,6 +33,7 @@ app.add_typer(project.app, name="project")
 app.add_typer(role.app, name="role")
 app.add_typer(screen.app, name="screen")
 app.add_typer(server.app, name="server")
+app.add_typer(space.app, name="space")
 app.add_typer(servicedesk.app, name="servicedesk")
 app.add_typer(setting.app, name="setting")
 app.add_typer(task.app, name="task")

@@ -1,15 +1,20 @@
 # -*- coding: utf-8 -*-
 import typer
-from jira.api.misc_client import MiscClient
+from jira.api.page_client import PageClient
 import json
 
 app = typer.Typer(help="Manage spaces")
 
 @app.command(help="Get a space")
 def get(
-    project_id: str = typer.Argument(help="The project id"),
-    role_id: str = typer.Argument(help="The role id")
+    space_key: str = typer.Argument(help="The space key")
     ):
-    result = MiscClient().getRole(project_id, role_id)
+    result = PageClient().getSpace(space_key)
+    print(json.dumps(result, indent=2))
+    return result
+
+@app.command(help="List spaces")
+def list():
+    result = PageClient().getSpaces()
     print(json.dumps(result, indent=2))
     return result

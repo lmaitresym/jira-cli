@@ -178,3 +178,10 @@ class PageClient(JiraClient):
         return json.loads(res.text)
     print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
     return None
+
+  def getSpaces(self) -> Any:
+    res = httpx.get(f"{self.server}/wiki/rest/api/space", headers=self.headers, auth=self.auth)
+    if res.status_code >= 200 and res.status_code < 300:
+        return json.loads(res.text)
+    print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
+    return None
