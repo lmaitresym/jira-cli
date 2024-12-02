@@ -58,9 +58,9 @@ class OptionClient(JiraClient):
 
   def getFieldOptions(self, field_key: str, context: str) -> list[dict[str,Any]]:
     if context:
-      uri = f"{self.server}/rest/api/3/customFieldOption/{field_key}"
-    else:
       uri = f"{self.server}/rest/api/3/field/{field_key}/context/{context}/option"
+    else:
+      uri = f"{self.server}/rest/api/3/customFieldOption/{field_key}"
     isLast = False
     startAtIdx = 0
     maxResults = 1000

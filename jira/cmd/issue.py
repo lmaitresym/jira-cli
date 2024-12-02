@@ -60,7 +60,7 @@ def update_issue(
         i = 1
         for issue_key in issue_keys_array:
             print("Update issue %s (%d/%d)" % (issue_key, i, len(issue_keys_array)))
-            current_issue: dict[str, Any] = IssueClient().getIssue(issue_key, None)
+            current_issue: dict[str, Any] = IssueClient().getIssue(issue_key, "")
             issuetype_id = current_issue['fields']['issuetype']['id']
             project_key = current_issue['fields']['project']['id']
             current_meta = IssueClient().getCreateMeta(project_key, issuetype_id)
@@ -79,12 +79,11 @@ def update_issue(
             return result
             i = i + 1
     else:
-        current_issue: dict[str, Any] = IssueClient().getIssue(issue_keys)
+        current_issue: dict[str, Any] = IssueClient().getIssue(issue_keys, "")
         issuetype_id = current_issue['fields']['issuetype']['id']
         project_key = current_issue['fields']['project']['id']
         print('Get meta for ' + issue_keys + ', issuetype=' + str(issuetype_id) + ', project_key=' + str(project_key))
-        rc, current_meta_json = IssueClient().getCreateMeta(project_key, issuetype_id)
-        current_meta = json.loads(current_meta_json)
+        current_meta = IssueClient().getCreateMeta(project_key, issuetype_id)
         targetFieldId = FieldClient().getFieldIdFromKeyAndMeta(field_key, current_meta)
         value = None
         if not(isLiteralValue):
@@ -106,14 +105,14 @@ def get_create_meta(project_key: str = typer.Argument(help="The project key"),
     print(json.dumps(result, indent=2))
 
 @app.command(help="Get isssues")
-def getIssues(
+def get_issues(
         jql: str = typer.Argument(help="The JQL query to get the issues"),
-        page_index: int = typer.Argument(help="The page to fetch"),
-        page_size: int = typer.Argument(help="The page size", default=100),
-        fields: str = typer.Argument(help="The fields to select", default="*all")
+        page_index: int = typer.Option(help="The page to fetch", default=-1),
+        page_size: int = typer.Option(help="The page size", default=100),
+        fields: str = typer.Option(help="The fields to select", default="*all")
     ):
     by_page = False
-    if page_index:
+    if page_index != -1:
         by_page = True
     if by_page:
         #print("Get page %s/%s of issues for jql %s" % (page_index, page_size, jql))
@@ -124,8 +123,8 @@ def getIssues(
     return result
 
 @app.command(help="Get the keys of issues matching a JQL query")
-def getIssuesKeys(jql: str = typer.Argument(help="The issues keys to query")) -> list[str]:
-    issues = IssueClient().getIssues(jql, None, None)
+def get_issues_keys(jql: str = typer.Argument(help="The issues keys to query")) -> list[str]:
+    issues = IssueClient().getIssues(jql, -1, "")
     issuesKeys: list[str] = list()
     for issue in issues:
         issuesKeys.append(issue['key'])
@@ -133,7 +132,7 @@ def getIssuesKeys(jql: str = typer.Argument(help="The issues keys to query")) ->
     return issuesKeys
 
 @app.command(help="Create issues from a JSON file")
-def createIssues(json_file: str = typer.Argument(help="A JSON file containing the issues to create")):
+def create_issues(json_file: str = typer.Argument(help="A JSON file containing the issues to create")):
     with open(json_file,'r') as issues_raw:
         issues = json.load(issues_raw)
         results = IssueClient().createIssues(issues)

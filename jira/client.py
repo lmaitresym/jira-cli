@@ -1,6 +1,7 @@
 import typer
 
 from jira.cmd import field
+from jira.cmd import issue
 from jira.cmd import issuetype
 from jira.cmd import option
 from jira.cmd import page
@@ -26,6 +27,7 @@ def init_config(
 
 app = typer.Typer(callback=init_config)
 app.add_typer(field.app, name="field")
+app.add_typer(issue.app, name="issue")
 app.add_typer(issuetype.app, name="issuetype")
 app.add_typer(option.app, name="option")
 app.add_typer(page.app, name="page")
