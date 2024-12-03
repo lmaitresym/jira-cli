@@ -6,7 +6,7 @@ authors = ["lmaitresym <ludovic.maitre@symphony.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11 <3.13"
 httpx = "^0.28.0"
 typer = "^0.14.0"
 

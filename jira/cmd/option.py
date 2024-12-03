@@ -62,9 +62,10 @@ def delete_project_options(field_key: str = typer.Argument(help="The field key")
             print("KO, no ref to " + str(project_id) + " in " + json.dumps(option))
 
 @app.command(help="Add several options from a file to a field's context")
-def add_options(field_key: str = typer.Argument(help="The field key"),
-                options_file: str = typer.Argument(help="The option file"),
-                project_keys: str = typer.Argument(help="The project keys")
+def add_options(
+        field_key: str = typer.Argument(help="The field key"),
+        options_file: str = typer.Argument(help="The option file"),
+        project_keys: str = typer.Argument(help="The project keys")
     ):
     option_values: list[str] = list()
     with open(options_file, 'r') as file:
