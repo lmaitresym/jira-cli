@@ -3,6 +3,8 @@ import httpx
 import json
 from typing import Any
 import sys
+import re
+import csv
 
 class IssueClient(JiraClient):
 
@@ -75,12 +77,21 @@ class IssueClient(JiraClient):
     print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
     return None
 
-  def updateIssue(self, issue_key: str, field_key: str, value: str) -> Any:
+  def updateIssue(self, issue_key: str, field_key: str, value: Any) -> Any:
     payload: dict[str, Any] = { "fields": {} }
-    payload['fields'][field_key] = value
+    if str == type(value):
+      values = [ '{}'.format(x) for x in next(csv.reader([value]))] #, delimiter=',', quotechar='"')) ]
+    else:
+       values = list(value)
+    values_payload: list[dict[str,str]] = []
+    for v in values:
+      values_payload.append({
+        'value': v
+      })
+    payload['fields'][field_key] = values_payload
     res = httpx.put(f"{self.server}/rest/api/3/issue/{issue_key}", json=payload, auth=self.auth)
     if res.status_code >= 200 and res.status_code < 300:
-        return json.loads(res.text)
+        return res.text
     print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
     return None
 

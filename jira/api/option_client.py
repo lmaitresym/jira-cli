@@ -101,7 +101,7 @@ class OptionClient(JiraClient):
         }
       ]
     }
-    res = httpx.post(f"{self.server}/rest/api/3/field/{field_key}/context/{context_id}/option", auth=self.auth, headers=headers, data=payload)
+    res = httpx.post(f"{self.server}/rest/api/3/field/{field_key}/context/{context_id}/option", auth=self.auth, headers=headers, json=payload)
     if res.status_code >= 200 and res.status_code < 300:
       return json.loads(res.text)
     print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
@@ -110,7 +110,8 @@ class OptionClient(JiraClient):
   def delOptionWithContext(self, field_key: str, context_id: str, option_id: str) -> Any:
     res = httpx.delete(f"{self.server}/rest/api/3/field/{field_key}/context/{context_id}/option/{option_id}", auth=self.auth)
     if res.status_code >= 200 and res.status_code < 300:
-      return json.loads(res.text)
+      #return json.loads(res.text)
+      return res.text
     print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
     return None
 

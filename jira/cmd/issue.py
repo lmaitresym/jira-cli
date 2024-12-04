@@ -34,7 +34,18 @@ def create(
         print(json.dumps(result, indent=2))
         return result
 
-@app.command(help="Update an issue")
+# ❯ jira issue update-field ESI-7603 customfield_11362 '"FIA Technology Services, Inc. - PROD - 55171","Junto Capital Management LP (JUNT) - PROD - 1172","Millennium Global Investments Ltd (MG) - PROD - 1485","Nationwide Insurance - PROD - 75110","QCP - PROD - 11294"'
+@app.command(help="Update a field in an issue")
+def update_field(
+        issue_key: str = typer.Argument(help="The issue keys"),
+        field_key: str = typer.Argument(help="The field key"),
+        value: str = typer.Argument(help="The value")
+):
+    result = IssueClient().updateIssue(issue_key, field_key, value)
+    print(json.dumps(result, indent=2))
+    return result
+
+@app.command(help="Update one or more issues")
 def update_issue(
         issue_keys: str = typer.Argument(help="The issue keys"),
         field_key: str = typer.Argument(help="The field key"),
