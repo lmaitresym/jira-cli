@@ -31,17 +31,18 @@ class IssueClient(JiraClient):
     startAtIdx = 0
     rc = 0
     maxResults = page_size
-    params = { 
+    params : dict[str,Any] = { 
       "jql": jql,
       "fields": fields,
       "maxResults": maxResults
     }
     all_issues: list[dict[str,Any]] = list()
     error_message = None
+    timeout = httpx.Timeout(10.0, read=30.0)
     while startAtIdx < total:
-      #print(f"At index {startAtIdx}/{total}...", file=sys.stderr)
+      print(f"At index {startAtIdx}/{total}...", file=sys.stderr)
       params['startAt'] = startAtIdx
-      res = httpx.get(uri, params=params, auth=self.auth)
+      res = httpx.get(uri, params=params, auth=self.auth, timeout=timeout)
       rc = res.status_code
       if rc == 200:
         payload = json.loads(res.text)
@@ -49,7 +50,7 @@ class IssueClient(JiraClient):
         nb_issues = len(issues)
         all_issues = all_issues + issues
         total = payload['total']
-        #print(f"Got {nb_issues} issues...", file=sys.stderr)
+        print(f"Got {nb_issues} issues...", file=sys.stderr)
         if startAtIdx < total:
           startAtIdx = startAtIdx + nb_issues
       else:
