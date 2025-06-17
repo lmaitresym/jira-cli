@@ -4,7 +4,7 @@ from typing import Any
 from jira.api.field_client import FieldClient
 import json
 
-app = typer.Typer(help="Manage fields")
+app = typer.Typer(help="Manage fields", no_args_is_help=True)
 
 @app.command(help="Get a Field")
 def get(field: str = typer.Argument(help="The field key or id")):
@@ -56,10 +56,10 @@ def get_field_by_name(field_name: str = typer.Argument(help="The field name")):
 def create_field(
     field_name: str = typer.Argument(help="The field name"),
     description: str = typer.Argument(help="The description"),
-    searcherKey: str = typer.Argument(help="The searcher key"),
-    fieldType: str = typer.Argument(help="The field type")
+    searcherkey: str = typer.Argument(help="The searcher key"),
+    fieldtype: str = typer.Argument(help="The field type")
     ):
-    result = FieldClient().createCustomField( field_name, description, searcherKey, fieldType)
+    result = FieldClient().createCustomField( field_name, description, searcherkey, fieldtype)
     print(json.dumps(result, indent=2))
     return result
 

@@ -4,7 +4,7 @@ import typer
 import json
 from jira.api.project_client import ProjectClient
 
-app = typer.Typer(help="Manage projects")
+app = typer.Typer(help="Manage projects", no_args_is_help=True)
 
 # ❯ poetry run jira-cli project get --project ESI
 @app.command(help="Get project")

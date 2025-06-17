@@ -5,7 +5,7 @@ from jira.api.issue_client import IssueClient
 from jira.api.field_client import FieldClient
 import json
 
-app = typer.Typer(help="Manage issues")
+app = typer.Typer(help="Manage issues", no_args_is_help=True)
 
 @app.command(help="Get an issue")
 def get(

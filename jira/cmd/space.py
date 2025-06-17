@@ -3,7 +3,7 @@ import typer
 from jira.api.page_client import PageClient
 import json
 
-app = typer.Typer(help="Manage spaces")
+app = typer.Typer(help="Manage spaces", no_args_is_help=True)
 
 @app.command(help="Get a space")
 def get(

@@ -20,10 +20,10 @@ class JiraClient(object):
   server: str
   auth: tuple[str,str]
 
-  def __init__(self):
-    self.server: str = jira_config["server"]
-    self.auth: tuple[str,str] = (jira_config["user"], jira_config["token"])
+  def __init__(self, custom_jira_config: dict[str,str] | None = None):
+    config: dict[str,str] = custom_jira_config if custom_jira_config is not None else jira_config
+    self.server: str = config["server"]
+    self.auth: tuple[str,str] = (config["user"], config["token"])
     self.headers = {
       "Accept": "application/json"
     }
-

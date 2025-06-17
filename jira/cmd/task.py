@@ -3,7 +3,7 @@ import typer
 from jira.api.misc_client import MiscClient
 import json
 
-app = typer.Typer(help="Manage tasks")
+app = typer.Typer(help="Manage tasks", no_args_is_help=True)
 
 @app.command(help="Get a task")
 def get(task_id: str = typer.Argument(help="The task id")):

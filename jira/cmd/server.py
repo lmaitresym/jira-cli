@@ -3,7 +3,7 @@ import typer
 from jira.api.misc_client import MiscClient
 import json
 
-app = typer.Typer(help="Manage server")
+app = typer.Typer(help="Manage server", no_args_is_help=True)
 
 @app.command(help="Get server infos")
 def infos():

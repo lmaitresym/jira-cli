@@ -40,7 +40,7 @@ class IssueClient(JiraClient):
     error_message = None
     timeout = httpx.Timeout(10.0, read=30.0)
     while startAtIdx < total:
-      print(f"At index {startAtIdx}/{total}...", file=sys.stderr)
+      #print(f"At index {startAtIdx}/{total}...", file=sys.stderr)
       params['startAt'] = startAtIdx
       res = httpx.get(uri, params=params, auth=self.auth, timeout=timeout)
       rc = res.status_code
@@ -50,7 +50,7 @@ class IssueClient(JiraClient):
         nb_issues = len(issues)
         all_issues = all_issues + issues
         total = payload['total']
-        print(f"Got {nb_issues} issues...", file=sys.stderr)
+        #print(f"Got {nb_issues} issues...", file=sys.stderr)
         if startAtIdx < total:
           startAtIdx = startAtIdx + nb_issues
       else:
@@ -58,7 +58,7 @@ class IssueClient(JiraClient):
         break
     if rc != 200:
       # print(f"{rc}:{error_message}", sys.stderr)
-      print(f"Error: {rc}:{error_message}", file=sys.stderr)
+      #print(f"Error: {rc}:{error_message}", file=sys.stderr)
       return []
     # pass
     return all_issues
@@ -96,18 +96,26 @@ class IssueClient(JiraClient):
     print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
     return None
 
-  def createIssue(self, issue: str) -> Any:
+  def createIssue(self, issue: dict[str, Any]) -> Any:
     res = httpx.post(f"{self.server}/rest/api/3/issue", auth=self.auth, json=issue)
     if res.status_code >= 200 and res.status_code < 300:
         return json.loads(res.text)
     print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
     return None
 
-  def createIssues(self, issues: str) -> Any:
-    res = httpx.post(f"{self.server}/rest/api/3/issue/bulk", auth=self.auth, json=issues)
+  def updateIssueFull(self, issue_key: str, issue: dict[str, Any]) -> Any:
+    res = httpx.put(f"{self.server}/rest/api/3/issue/{issue_key}", json=issue, auth=self.auth)
+    if res.status_code >= 200 and res.status_code < 300:
+        return res.text
+    print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
+    return None
+
+  def createIssues(self, issues: dict[str, Any]) -> Any:
+    timeout = httpx.Timeout(20.0, read=60.0)
+    res = httpx.post(f"{self.server}/rest/api/3/issue/bulk", auth=self.auth, json=issues, timeout=timeout)
     if res.status_code >= 200 and res.status_code < 300:
         return json.loads(res.text)
-    print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
+    #print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
     return None
 
   def getCreateMeta(self, project_key: Any, issuetype_key: Any) ->  dict[str, Any]:

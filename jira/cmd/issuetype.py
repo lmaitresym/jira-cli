@@ -3,7 +3,7 @@ import typer
 from jira.api.issuetype_client import IssueTypeClient
 import json
 
-app = typer.Typer(help="Manage issue types")
+app = typer.Typer(help="Manage issue types", no_args_is_help=True)
 
 @app.command(help="Get an issue type")
 def get(issuetype_key: str = typer.Argument(help="Issue type key")):

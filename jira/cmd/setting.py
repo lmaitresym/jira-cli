@@ -3,7 +3,7 @@ import typer
 from jira.api.setting_client import SettingClient
 import json
 
-app = typer.Typer(help="Manage settings")
+app = typer.Typer(help="Manage settings", no_args_is_help=True)
 
 @app.command(help="Get a setting")
 def get(setting_key : str = typer.Argument(help="The setting key")):

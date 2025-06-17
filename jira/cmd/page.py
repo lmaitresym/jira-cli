@@ -3,7 +3,7 @@ import typer
 from jira.api.page_client import PageClient
 import json
 
-app = typer.Typer(help="Manage pages")
+app = typer.Typer(help="Manage pages", no_args_is_help=True)
 
 @app.command(help="Get a page")
 def get(

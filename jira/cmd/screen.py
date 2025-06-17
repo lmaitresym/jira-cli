@@ -3,7 +3,7 @@ import typer
 from jira.api.screen_client import ScreenClient
 import json
 
-app = typer.Typer(help="Manage screens")
+app = typer.Typer(help="Manage screens", no_args_is_help=True)
 
 @app.command(help="Get a screen")
 def get(screen_id: str = typer.Argument(help="The screen id")):

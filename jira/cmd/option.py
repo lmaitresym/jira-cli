@@ -5,7 +5,7 @@ from jira.api.jira_client import indexOf
 from jira.api.option_client import OptionClient
 import json
 
-app = typer.Typer(help="Manage options")
+app = typer.Typer(help="Manage options", no_args_is_help=True)
 
 @app.command(help="Load options from a field to a field in some projects")
 def load_options(field_key: str = typer.Argument(help="The field key"),

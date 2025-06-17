@@ -14,6 +14,7 @@ from jira.cmd import servicedesk
 from jira.cmd import setting
 from jira.cmd import space
 from jira.cmd import task
+from jira.cmd import sync
 
 from jira.api.jira_client import jira_config
 
@@ -26,7 +27,7 @@ def init_config(
   jira_config["user"] = user
   jira_config["token"] = token
 
-app = typer.Typer(callback=init_config)
+app = typer.Typer(callback=init_config, no_args_is_help=True)
 app.add_typer(field.app, name="field")
 app.add_typer(issue.app, name="issue")
 app.add_typer(issues.app, name="issues")
@@ -41,6 +42,7 @@ app.add_typer(space.app, name="space")
 app.add_typer(servicedesk.app, name="servicedesk")
 app.add_typer(setting.app, name="setting")
 app.add_typer(task.app, name="task")
+app.add_typer(sync.app, name="sync")
 
 if __name__ == '__main__':
     app()

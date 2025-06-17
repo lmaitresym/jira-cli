@@ -3,7 +3,7 @@ import typer
 from jira.api.misc_client import MiscClient
 import json
 
-app = typer.Typer(help="Manage role")
+app = typer.Typer(help="Manage role", no_args_is_help=True)
 
 @app.command(help="Get a role")
 def get(

@@ -63,18 +63,24 @@ class OptionClient(JiraClient):
       uri = f"{self.server}/rest/api/3/customFieldOption/{field_key}"
     isLast = False
     startAtIdx = 0
-    maxResults = 1000
+    total = 999999
+    maxResults = 100
     error_code = 0
     error_message = ""
     all_options: list[dict[str,str]] = list()
+    timeout = httpx.Timeout(10.0, read=30.0)
     while not isLast:
+      print(f"At index {startAtIdx}/{total}...", file=sys.stderr)
       params = {
         "startAt": startAtIdx,
         "maxResults": maxResults
       }
-      res = httpx.get(uri, params=params, auth=self.auth)
+      res = httpx.get(uri, params=params, auth=self.auth, timeout=timeout)
       if res.status_code == 200:
         payload = json.loads(res.text)
+        total = payload['total']
+        count = len(payload['values'])
+        print(f"Got {count} options...", file=sys.stderr)
         all_options = all_options + payload['values']
         isLast = payload['isLast']
         if not isLast:
@@ -100,6 +106,20 @@ class OptionClient(JiraClient):
           'value': option_value
         }
       ]
+    }
+    res = httpx.post(f"{self.server}/rest/api/3/field/{field_key}/context/{context_id}/option", auth=self.auth, headers=headers, json=payload)
+    if res.status_code >= 200 and res.status_code < 300:
+      return json.loads(res.text)
+    print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
+    return None
+
+  def addOptionsListWithContext(self, field_key: str, context_id: str, options: list[dict[str,Any]]) -> Any:
+    headers = {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    }
+    payload = {
+      "options": options
     }
     res = httpx.post(f"{self.server}/rest/api/3/field/{field_key}/context/{context_id}/option", auth=self.auth, headers=headers, json=payload)
     if res.status_code >= 200 and res.status_code < 300:
