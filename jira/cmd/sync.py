@@ -4,7 +4,6 @@ from typing import Any
 from jira.api.field_client import FieldClient
 from jira.api.option_client import OptionClient
 from jira.api.issue_client import IssueClient
-import json
 import yaml
 import sys
 
@@ -34,12 +33,12 @@ def check_fields(
     ):
     with open(config, 'r') as stream:
         try:
-            config = yaml.safe_load(stream)
+            config_dict = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
             sys.exit(1)
-        source_config: dict[str,str] = config['source']
-        target_config: dict[str,str] = config['target']
+        source_config: dict[str,str] = config_dict['source']
+        target_config: dict[str,str] = config_dict['target']
 
         source_field_client = FieldClient(source_config)
         target_field_client = FieldClient(target_config)
@@ -70,12 +69,12 @@ def sync_fields(
     ):
     with open(config, 'r') as stream:
         try:
-            config = yaml.safe_load(stream)
+            config_dict = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
             sys.exit(1)
-        source_config: dict[str,str] = config['source']
-        target_config: dict[str,str] = config['target']
+        source_config: dict[str,str] = config_dict['source']
+        target_config: dict[str,str] = config_dict['target']
 
         source_field_client = FieldClient(source_config)
         target_field_client = FieldClient(target_config)
@@ -118,12 +117,12 @@ def check_issues(
     ):
     with open(config, 'r') as stream:
         try:
-            config = yaml.safe_load(stream)
+            config_dict = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
             sys.exit(1)
-        source_config: dict[str,str] = config['source']
-        target_config: dict[str,str] = config['target']
+        source_config: dict[str,str] = config_dict['source']
+        target_config: dict[str,str] = config_dict['target']
 
         source_issue_client = IssueClient(source_config)
         target_issue_client = IssueClient(target_config)
@@ -160,12 +159,12 @@ def sync_issues(
     ):
     with open(config, 'r') as stream:
         try:
-            config = yaml.safe_load(stream)
+            config_dict = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
             sys.exit(1)
-        source_config: dict[str,str] = config['source']
-        target_config: dict[str,str] = config['target']
+        source_config: dict[str,str] = config_dict['source']
+        target_config: dict[str,str] = config_dict['target']
 
         source_issue_client = IssueClient(source_config)
         target_issue_client = IssueClient(target_config)
@@ -243,7 +242,6 @@ def get_target_issue(source_issue: dict[str,Any], fields_map: dict[str,str], tar
     target_issue_fields['project'] = {
         'key': target_board
     }
-    # Task
     target_issue_fields['issuetype'] = {
         'name': 'Task'
     }
