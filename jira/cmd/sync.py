@@ -163,7 +163,7 @@ def sync_cascading_fields(
         options_to_create: list[dict[str, Any]] = list()
         for source_value in parent_options.keys():
             if not source_value in target_values:
-                print(f"Adding {source_value} to target")                
+                print(f"Adding {source_value} to target")
                 options_to_create.append(parent_options[source_value])
                 added_options_count += 1
         created_parent_options: list[dict[str,Any]] = list()
