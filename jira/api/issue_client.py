@@ -21,6 +21,8 @@ class IssueClient(JiraClient):
   def deleteIssue(self, issue_key: str) -> Any:
     res = httpx.delete(f"{self.server}/rest/api/3/issue/{issue_key}", auth=self.auth)
     if res.status_code >= 200 and res.status_code < 300:
+        if res.status_code == 204:
+          return True
         return json.loads(res.text)
     print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
     return None
@@ -39,6 +41,7 @@ class IssueClient(JiraClient):
     all_issues: list[dict[str,Any]] = list()
     error_message = None
     timeout = httpx.Timeout(10.0, read=30.0)
+    print(f"Search for {jql}", file=sys.stderr)
     while startAtIdx < total:
       #print(f"At index {startAtIdx}/{total}...", file=sys.stderr)
       params['startAt'] = startAtIdx
@@ -58,7 +61,7 @@ class IssueClient(JiraClient):
         break
     if rc != 200:
       # print(f"{rc}:{error_message}", sys.stderr)
-      #print(f"Error: {rc}:{error_message}", file=sys.stderr)
+      print(f"Error: {rc}:{error_message}", file=sys.stderr)
       return []
     # pass
     return all_issues

@@ -34,8 +34,19 @@ class OptionClient(JiraClient):
     print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
     return None
 
-  def updateFieldOption(self, field_key: str, option: dict[str,str]) -> Any:
+  def updateFieldOption(self, field_key: str, option: dict[str,Any]) -> Any:
     res = httpx.put(f"{self.server}/rest/api/3/field/{field_key}/option/{option['id']}", auth=self.auth, json=option)
+    if res.status_code >= 200 and res.status_code < 300:
+      return json.loads(res.text)
+    print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
+    return None
+
+  def updateFieldOptionsWithContext(self, field_key: str, context_id: str, options: dict[str,Any]) -> Any:
+    headers = {
+      "Accept": "application/json",
+      "Content-Type": "application/json"      
+    }
+    res = httpx.put(f"{self.server}/rest/api/3/field/{field_key}/context/{context_id}/option", auth=self.auth, headers=headers, json=options)
     if res.status_code >= 200 and res.status_code < 300:
       return json.loads(res.text)
     print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
