@@ -66,6 +66,48 @@ class IssueClient(JiraClient):
     # pass
     return all_issues
 
+  def getIssues(self, jql: str, page_size: int, fields: str) -> list[dict[str,Any]]:
+    uri = f"{self.server}/rest/api/3/search/jql"
+    total = 999999
+    nextToken = None
+    stop = False
+    rc = 0
+    maxResults = page_size
+    params : dict[str,Any] = { 
+      "jql": jql,
+      "fields": fields,
+      "maxResults": maxResults
+    }
+    all_issues: list[dict[str,Any]] = list()
+    error_message = None
+    timeout = httpx.Timeout(10.0, read=30.0)
+    print(f"Search for {jql}", file=sys.stderr)
+    while not stop:
+      #print(f"At index {startAtIdx}/{total}...", file=sys.stderr)
+      if nextToken is not None:
+        params['nextToken'] = nextToken
+      res = httpx.get(uri, params=params, auth=self.auth, timeout=timeout)
+      rc = res.status_code
+      if rc == 200:
+        payload = json.loads(res.text)
+        issues = payload['issues']
+        # nb_issues = len(issues)
+        all_issues = all_issues + issues
+        if not 'nextToken' in payload:
+          stop = True
+        else:
+          nextToken = payload['nextToken']
+        #print(f"Got {nb_issues} issues...", file=sys.stderr)
+      else:
+        error_message = res.text
+        break
+    if rc != 200:
+      # print(f"{rc}:{error_message}", sys.stderr)
+      print(f"Error: {rc}:{error_message}", file=sys.stderr)
+      return []
+    # pass
+    return all_issues
+
   def getIssuesPage(self, jql: str, page: int, pageSize: int, expand: list[str]) -> Any:
     params: dict[str,Any] = {
       "jql": jql,

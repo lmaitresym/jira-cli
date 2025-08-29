@@ -118,18 +118,10 @@ def get_create_meta(project_key: str = typer.Argument(help="The project key"),
 @app.command(help="Get isssues")
 def get_issues(
         jql: str = typer.Argument(help="The JQL query to get the issues"),
-        page_index: int = typer.Option(help="The page to fetch", default=-1),
         page_size: int = typer.Option(help="The page size", default=100),
         fields: str = typer.Option(help="The fields to select", default="*all")
     ):
-    by_page = False
-    if page_index != -1:
-        by_page = True
-    if by_page:
-        #print("Get page %s/%s of issues for jql %s" % (page_index, page_size, jql))
-        result = IssueClient().getIssuesPage(jql, page_index, page_size, fields.split(","))
-    else:
-        result = IssueClient().getIssues(jql, page_size, fields)
+    result = IssueClient().getIssues(jql, page_size, fields)
     print(json.dumps(result, indent=2))
     return result
 
