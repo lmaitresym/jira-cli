@@ -1,0 +1,182 @@
+from jira.api.jira_client import JiraClient
+import httpx
+import json
+from typing import Any
+import sys
+import re
+import csv
+
+class IssueClient(JiraClient):
+
+  def getIssue(self, issue_key: str, fields: str) -> dict[str, Any]:
+    params = {
+      "fields": fields
+    }
+    res = httpx.get(f"{self.server}/rest/api/3/issue/{issue_key}", params=params, auth=self.auth)
+    if res.status_code >= 200 and res.status_code < 300:
+        return json.loads(res.text)
+    print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
+    return {}
+
+  def deleteIssue(self, issue_key: str) -> Any:
+    res = httpx.delete(f"{self.server}/rest/api/3/issue/{issue_key}", auth=self.auth)
+    if res.status_code >= 200 and res.status_code < 300:
+        if res.status_code == 204:
+          return True
+        return json.loads(res.text)
+    print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
+    return None
+
+  def getIssues(self, jql: str, page_size: int, fields: str) -> list[dict[str,Any]]:
+    uri = f"{self.server}/rest/api/3/search"
+    total = 999999
+    startAtIdx = 0
+    rc = 0
+    maxResults = page_size
+    params : dict[str,Any] = { 
+      "jql": jql,
+      "fields": fields,
+      "maxResults": maxResults
+    }
+    all_issues: list[dict[str,Any]] = list()
+    error_message = None
+    timeout = httpx.Timeout(10.0, read=30.0)
+    print(f"Search for {jql}", file=sys.stderr)
+    while startAtIdx < total:
+      #print(f"At index {startAtIdx}/{total}...", file=sys.stderr)
+      params['startAt'] = startAtIdx
+      res = httpx.get(uri, params=params, auth=self.auth, timeout=timeout)
+      rc = res.status_code
+      if rc == 200:
+        payload = json.loads(res.text)
+        issues = payload['issues']
+        nb_issues = len(issues)
+        all_issues = all_issues + issues
+        total = payload['total']
+        #print(f"Got {nb_issues} issues...", file=sys.stderr)
+        if startAtIdx < total:
+          startAtIdx = startAtIdx + nb_issues
+      else:
+        error_message = res.text
+        break
+    if rc != 200:
+      # print(f"{rc}:{error_message}", sys.stderr)
+      print(f"Error: {rc}:{error_message}", file=sys.stderr)
+      return []
+    # pass
+    return all_issues
+
+  def getIssues(self, jql: str, page_size: int, fields: str) -> list[dict[str,Any]]:
+    uri = f"{self.server}/rest/api/3/search/jql"
+    total = 999999
+    nextToken = None
+    stop = False
+    rc = 0
+    maxResults = page_size
+    params : dict[str,Any] = { 
+      "jql": jql,
+      "fields": fields,
+      "maxResults": maxResults
+    }
+    all_issues: list[dict[str,Any]] = list()
+    error_message = None
+    timeout = httpx.Timeout(10.0, read=30.0)
+    print(f"Search for {jql}", file=sys.stderr)
+    while not stop:
+      #print(f"At index {startAtIdx}/{total}...", file=sys.stderr)
+      if nextToken is not None:
+        params['nextToken'] = nextToken
+      res = httpx.get(uri, params=params, auth=self.auth, timeout=timeout)
+      rc = res.status_code
+      if rc == 200:
+        payload = json.loads(res.text)
+        issues = payload['issues']
+        # nb_issues = len(issues)
+        all_issues = all_issues + issues
+        if not 'nextToken' in payload:
+          stop = True
+        else:
+          nextToken = payload['nextToken']
+        #print(f"Got {nb_issues} issues...", file=sys.stderr)
+      else:
+        error_message = res.text
+        break
+    if rc != 200:
+      # print(f"{rc}:{error_message}", sys.stderr)
+      print(f"Error: {rc}:{error_message}", file=sys.stderr)
+      return []
+    # pass
+    return all_issues
+
+  def getIssuesPage(self, jql: str, page: int, pageSize: int, expand: list[str]) -> Any:
+    params: dict[str,Any] = {
+      "jql": jql,
+      "fields": "*all",
+      "startAt": page*pageSize,
+      "maxResults": pageSize
+    }
+    if expand:
+      params['expand'] = expand
+    res = httpx.get(f"{self.server}/rest/api/3/search", params=params, auth=self.auth)
+    if res.status_code >= 200 and res.status_code < 300:
+        return json.loads(res.text)
+    print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
+    return None
+
+  def updateIssue(self, issue_key: str, field_key: str, value: Any) -> Any:
+    payload: dict[str, Any] = { "fields": {} }
+    if str == type(value):
+      values = [ '{}'.format(x) for x in next(csv.reader([value]))] #, delimiter=',', quotechar='"')) ]
+    else:
+       values = list(value)
+    values_payload: list[dict[str,str]] = []
+    for v in values:
+      values_payload.append({
+        'value': v
+      })
+    payload['fields'][field_key] = values_payload
+    res = httpx.put(f"{self.server}/rest/api/3/issue/{issue_key}", json=payload, auth=self.auth)
+    if res.status_code >= 200 and res.status_code < 300:
+        return res.text
+    print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
+    return None
+
+  def createIssue(self, issue: dict[str, Any]) -> Any:
+    res = httpx.post(f"{self.server}/rest/api/3/issue", auth=self.auth, json=issue)
+    if res.status_code >= 200 and res.status_code < 300:
+        return json.loads(res.text)
+    print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
+    return None
+
+  def updateIssueFull(self, issue_key: str, issue: dict[str, Any]) -> Any:
+    res = httpx.put(f"{self.server}/rest/api/3/issue/{issue_key}", json=issue, auth=self.auth)
+    if res.status_code >= 200 and res.status_code < 300:
+        return res.text
+    print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
+    return None
+
+  def createIssues(self, issues: dict[str, Any]) -> Any:
+    timeout = httpx.Timeout(20.0, read=60.0)
+    res = httpx.post(f"{self.server}/rest/api/3/issue/bulk", auth=self.auth, json=issues, timeout=timeout)
+    if res.status_code >= 200 and res.status_code < 300:
+        return json.loads(res.text)
+    #print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
+    return None
+
+  def getCreateMeta(self, project_key: Any, issuetype_key: Any) ->  dict[str, Any]:
+    params: dict[str,Any] = {
+      "expand": "projects.issuetypes.fields"
+    }
+    if isinstance(project_key, int):
+      params['projectIds'] = project_key
+    elif isinstance(project_key, str):
+      params['projectKeys'] = project_key
+    if isinstance(issuetype_key, int):
+      params['issuetypeIds'] = issuetype_key
+    elif isinstance(issuetype_key, str):
+      params['issuetypeNames'] = issuetype_key
+    res = httpx.get(f"{self.server}/rest/api/3/issue/createmeta", params=params, auth=self.auth)
+    if res.status_code >= 200 and res.status_code < 300:
+        return json.loads(res.text)
+    print(f"Error {res.status_code}: {res.text}", file=sys.stderr)
+    return {}

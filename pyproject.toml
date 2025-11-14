@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "jira"
+version = "2.0.0"
+description = "JIRA and Confluence client utilities"
+authors = ["lmaitresym <ludovic.maitre@symphony.com>"]
+readme = "README.md"
+packages = [
+    { include = "jira" }
+]
+
+[tool.poetry.dependencies]
+python = ">=3.12 <3.13"
+typer = "^0.16.0"
+httpx = "^0.28.1"
+pyyaml = "^6.0.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+jira-cli = "jira.client:app"
